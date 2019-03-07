@@ -16,12 +16,12 @@ def airy(x, y, x_offset, y_offset, i0):
     r = np.sqrt((x+x_offset)**2+(y+y_offset)**2)
     return i0*(2*sp.special.j1(r)/r)**2
 
+frames = 10 #corresponds to t
+boundary = 30 #corresponds to n
+steps = 80 #resolution
+
 cube_ideal = []
 cube_real = []
-
-frames = 10 #corresponds to t
-boundary = 30 #corresponds to n x n
-steps = 80 #resolution
 
 for i in range(frames):
 
@@ -32,7 +32,7 @@ for i in range(frames):
     for x in np.linspace(boundary, -boundary, steps):
         temp = []
         for y in np.linspace(-boundary, boundary, steps):
-            temp.append(airy(x, y, 0, 0, 10))
+            temp.append(airy(x, y, 0.00000001, 0.00000001, 10)) #if 0, then nan
         star.append(temp)
         
     for x in np.linspace(boundary, -boundary, steps):
@@ -56,10 +56,27 @@ for i in range(frames):
 cube_ideal = np.asarray(cube_ideal)
 cube_real = np.asarray(cube_real)
 
-print(cube_ideal)
-
 
 '''reshape data cube into t x n^2 matrix'''
+Y_ideal = []
+Y_real = []
+
+for i in range(len(cube_ideal)):
+    temp = []
+    for j in cube_ideal[i]:
+        for k in j:
+            temp.append(k)
+    Y_ideal.append(temp)
+
+for i in range(len(cube_real)):
+    temp = []
+    for j in cube_real[i]:
+        for k in j:
+            temp.append(k)
+    Y_real.append(temp)
+    
+Y_ideal = np.asarray(Y_ideal)   
+Y_real = np.asarray(Y_real)   
 
 
 '''PCA'''
@@ -118,35 +135,15 @@ def RLPCA(Y, p):
         return Y - LRA(Y - S_r(rank-1), rank)
     return S_r(p)
     
-#def S_r(Y, rank):
-#    if rank == 0:
-#        return Y - LRA(Y, 1)
-#    return Y - LRA(Y - S_r(Y, rank-1), rank)
-    
-    
-def tester(Y, p):
+def RLPCA2(Y, p):
     S = Y - LRA(Y, 1)
     for i in range(1, p+1):
         S = Y - LRA(S, i)
     return S
 
-test = np.asarray([[1, 2, 1], [2, 2, 3], [3, 1, 2]])
-
 S_pca = Y_real - LRA(Y_real, 2)
 S_p = RLPCA(Y_real, 3)
 
-#print(Y_real - LRA(Y_real, 1))
-#print("\n\n\n")
-#print(RLPCA(Y_real, 1))
-#print("\n\n\n")
-#print(RLPCA(Y_real, 10))
-#print("\n\n\n")
-#print(RLPCA(Y_real, 30))
-#print("\n\n\n")
-#print(RLPCA(Y_real, 50))
-
-                        
-            
 
 '''make plot'''
 plt.suptitle("Simulated Exoplanet")
