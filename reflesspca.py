@@ -85,6 +85,7 @@ def trimatmul(A, B, C):
      
 def SVD(A):
     U, sigma, Vh = sp.linalg.svd(A)
+    '''FIX THIS FOR GENERAL MATRICES'''
     Sigma = np.diag(sigma) #only works that simple for QUADRATIC matrices!
     return U, Sigma, Vh
 
@@ -142,6 +143,10 @@ def RLPCA2(Y, p):
 
 S_pca = Y_real - LRA(Y_real, 2)
 S_p = RLPCA(Y_real, 3)
+
+
+'''reshape t x n^2 matrix back to time averaged n xn matrix'''
+
 
 
 '''make plot'''
