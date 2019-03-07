@@ -11,39 +11,55 @@ import matplotlib.pyplot as plt
 import random as rd
 
 
-'''create data consisting of star signal, planet signal and noise'''
+'''create t x n x n data cube of t images consisting of star signal, planet signal and noise'''
 def airy(x, y, x_offset, y_offset, i0):
     r = np.sqrt((x+x_offset)**2+(y+y_offset)**2)
     return i0*(2*sp.special.j1(r)/r)**2
 
-star = []
-planet= []
-noise = []
+cube_ideal = []
+cube_real = []
 
-boundary = 30
-steps = 80
+frames = 10 #corresponds to t
+boundary = 30 #corresponds to n x n
+steps = 80 #resolution
 
-for x in np.linspace(boundary, -boundary, steps):
-    temp = []
-    for y in np.linspace(-boundary, boundary, steps):
-        temp.append(airy(x, y, 0, 0, 10))
-    star.append(temp)
+for i in range(frames):
+
+    star = []
+    planet= []
+    noise = []
+
+    for x in np.linspace(boundary, -boundary, steps):
+        temp = []
+        for y in np.linspace(-boundary, boundary, steps):
+            temp.append(airy(x, y, 0, 0, 10))
+        star.append(temp)
+        
+    for x in np.linspace(boundary, -boundary, steps):
+        temp = []
+        for y in np.linspace(-boundary, boundary, steps):
+            temp.append(airy(x, y, 15, -14, 1))
+        planet.append(temp)
     
-for x in np.linspace(boundary, -boundary, steps):
-    temp = []
-    for y in np.linspace(-boundary, boundary, steps):
-        temp.append(airy(x, y, 15, -14, 1))
-    planet.append(temp)
+    for x in np.linspace(boundary, -boundary, steps):
+        temp = []
+        for y in np.linspace(-boundary, boundary, steps):
+            temp.append(rd.uniform(0, 0.3))
+        noise.append(temp)
+    
+    frame_ideal = np.asarray(planet)    
+    frame_real = np.asarray(star) + np.asarray(planet) + np.asarray(noise)
 
-for x in np.linspace(boundary, -boundary, steps):
-    temp = []
-    for y in np.linspace(-boundary, boundary, steps):
-        temp.append(rd.uniform(0, 0.3))
-    noise.append(temp)
+    cube_ideal.append(frame_ideal)
+    cube_real.append(frame_real)    
+    
+cube_ideal = np.asarray(cube_ideal)
+cube_real = np.asarray(cube_real)
 
-Y_ideal = np.asarray(planet)
+print(cube_ideal)
 
-Y_real = np.asarray(star) + np.asarray(planet) + np.asarray(noise)
+
+'''reshape data cube into t x n^2 matrix'''
 
 
 '''PCA'''
@@ -100,8 +116,7 @@ def RLPCA(Y, p):
         if rank == 0:
             return Y - LRA(Y, 1)
         return Y - LRA(Y - S_r(rank-1), rank)
-    S_p = S_r(p)
-    return S_p
+    return S_r(p)
     
 #def S_r(Y, rank):
 #    if rank == 0:
@@ -116,13 +131,9 @@ def tester(Y, p):
     return S
 
 test = np.asarray([[1, 2, 1], [2, 2, 3], [3, 1, 2]])
-print(RLPCA(test, 2))
-print(tester(test, 2))
 
 S_pca = Y_real - LRA(Y_real, 2)
-S_p = tester(Y_real, 3)
-S_p2 = tester(Y_real, 73)
-
+S_p = RLPCA(Y_real, 3)
 
 #print(Y_real - LRA(Y_real, 1))
 #print("\n\n\n")
@@ -139,6 +150,8 @@ S_p2 = tester(Y_real, 73)
 
 '''make plot'''
 plt.suptitle("Simulated Exoplanet")
+plt.subplots_adjust(hspace=0.5)
+
 plt.subplot(2, 2, 1)
 plt.title("Ideal")
 plt.imshow(Y_ideal, vmin=0, vmax=1)
@@ -149,10 +162,10 @@ plt.imshow(Y_real, vmin=0, vmax=1)
 
 plt.subplot(2, 2, 3)
 plt.title("PCA (Rank 2)")
-plt.imshow(S_p2, vmin=0, vmax=1)
+plt.imshow(S_pca, vmin=0, vmax=1)
 
 plt.subplot(2, 2, 4)
-plt.title("RL PCA")
+plt.title("RLPCA")
 plt.imshow(S_p, vmin=0, vmax=1)
 
 plt.savefig("fig.png", dpi=400)
