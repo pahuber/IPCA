@@ -116,9 +116,8 @@ def LRA(A, rank):
             temp.append(Vh[i][j])
         Vh_r.append(temp)
     Vh_r = np.asarray(Vh_r)
-    
+    #calculate L
     L = trimatmul(U_r, Sigma_r, Vh_r)
-    
     #set negative parts of L to zero
     for i in range(len(L)):
         for j in range(len(L[0])):
