@@ -216,4 +216,4 @@ plt.subplot(2, 2, 4)
 plt.title("RLPCA ($p=2$)")
 plt.imshow(processed_frame)
 
-plt.savefig("fig.png", dpi=400)
+plt.savefig("figure.png", dpi=400)
