@@ -38,7 +38,7 @@ for i in range(frames):
     for x in np.linspace(boundary, -boundary, steps):
         temp = []
         for y in np.linspace(-boundary, boundary, steps):
-            temp.append(airy(x, y, 15, -14, 2))
+            temp.append(airy(x, y, 15, -14, 1))
         planet.append(temp)
     
     for x in np.linspace(boundary, -boundary, steps):
