@@ -17,8 +17,8 @@ def airy(x, y, x_offset, y_offset, i0):
     return i0*(2*sp.special.j1(r)/r)**2
 
 frames = 10 #corresponds to t
-boundary = 30 #corresponds to n
-steps = 80 #resolution
+boundary = 30 #resolution
+steps = 80 #corresponds to n
 
 cube_ideal = []
 cube_real = []
@@ -58,25 +58,20 @@ cube_real = np.asarray(cube_real)
 
 
 '''reshape data cube into t x n^2 matrix'''
-Y_ideal = []
-Y_real = []
-
-for i in range(len(cube_ideal)):
-    temp = []
-    for j in cube_ideal[i]:
-        for k in j:
-            temp.append(k)
-    Y_ideal.append(temp)
-
-for i in range(len(cube_real)):
-    temp = []
-    for j in cube_real[i]:
-        for k in j:
-            temp.append(k)
-    Y_real.append(temp)
+def cube2mat(A):
+    A_mat = []
     
-Y_ideal = np.asarray(Y_ideal)   
-Y_real = np.asarray(Y_real)   
+    for i in range(len(A)):
+        temp = []
+        for j in A[i]:
+            for k in j:
+                temp.append(k)
+        A_mat.append(temp)
+    A_mat = np.asarray(A_mat)  
+    return A_mat
+    
+Y_ideal = cube2mat(cube_ideal)
+Y_real = cube2mat(cube_real)
 
 
 '''PCA'''
@@ -85,8 +80,26 @@ def trimatmul(A, B, C):
      
 def SVD(A):
     U, sigma, Vh = sp.linalg.svd(A)
-    '''FIX THIS FOR GENERAL MATRICES'''
-    Sigma = np.diag(sigma) #only works that simple for QUADRATIC matrices!
+    #create matrix with same dimensions as A, sigma on diagonal and fill additional cols/rows with zeros if A is not quadratic
+    rows = len(A)
+    cols = len(A[0])   
+    Sigma = np.diag(sigma)
+    if rows < cols:
+        Sigma_new = []
+        for i in Sigma:
+            i = i.tolist()
+            for j in range(cols-rows):
+                i.append(0)
+            Sigma_new.append(i)
+        Sigma = Sigma_new
+    elif rows > cols:
+        Sigma = Sigma.tolist()
+        for i in range(rows-cols):
+            temp = []
+            for j in range(len(Sigma[0])):
+                temp.append(0)
+            Sigma.append(temp)
+    Sigma = np.asarray(Sigma)
     return U, Sigma, Vh
 
 def LRA(A, rank):
@@ -145,8 +158,38 @@ S_pca = Y_real - LRA(Y_real, 2)
 S_p = RLPCA(Y_real, 3)
 
 
-'''reshape t x n^2 matrix back to time averaged n xn matrix'''
-
+'''reshape t x n^2 matrix back to time averaged n x n matrix, i. e. final processed frame'''
+def mat2frame(A):
+    #create matrix with dimensions of original image containing only zeros
+    summed = []
+    for i in range(steps):
+        temp = []
+        for j in range(steps):
+            temp.append(0)
+        summed.append(temp)
+    
+    #create a n x n matrix out of every row in the t x n^2 matrix and sum it to matrix summed
+    temp_row = []
+    temp_matrix = []
+    counter = 0
+    for row in S_pca:
+        for i in row:
+            temp_row.append(i)
+            counter += 1
+            if counter == steps:
+                temp_matrix.append(temp_row)
+                temp_row = []
+        summed += temp_matrix
+        temp_matrix = []
+        
+    #build time average of every entry of summed to get final processed frame
+    for i in range(len(summed)):
+        for j in range(len(summed[0])):
+            summed[i][j] = 1/frames*summed[i][j]
+    processed_frame = summed
+    return processed_frame
+    
+processed_frame = mat2frame(S_p)
 
 
 '''make plot'''
@@ -155,18 +198,18 @@ plt.subplots_adjust(hspace=0.5)
 
 plt.subplot(2, 2, 1)
 plt.title("Ideal")
-plt.imshow(Y_ideal, vmin=0, vmax=1)
+plt.imshow(processed_frame)
 
-plt.subplot(2, 2, 2)
-plt.title("w/ Noise")
-plt.imshow(Y_real, vmin=0, vmax=1)
-
-plt.subplot(2, 2, 3)
-plt.title("PCA (Rank 2)")
-plt.imshow(S_pca, vmin=0, vmax=1)
-
-plt.subplot(2, 2, 4)
-plt.title("RLPCA")
-plt.imshow(S_p, vmin=0, vmax=1)
+#plt.subplot(2, 2, 2)
+#plt.title("w/ Noise")
+#plt.imshow(Y_real, vmin=0, vmax=1)
+#
+#plt.subplot(2, 2, 3)
+#plt.title("PCA (Rank 2)")
+#plt.imshow(S_pca, vmin=0, vmax=1)
+#
+#plt.subplot(2, 2, 4)
+#plt.title("RLPCA")
+#plt.imshow(S_p, vmin=0, vmax=1)
 
 plt.savefig("fig.png", dpi=400)
