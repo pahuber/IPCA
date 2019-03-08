@@ -32,19 +32,19 @@ for i in range(frames):
     for x in np.linspace(boundary, -boundary, steps):
         temp = []
         for y in np.linspace(-boundary, boundary, steps):
-            temp.append(airy(x, y, 0.00000001, 0.00000001, 10)) #if 0, then nan
+            temp.append(airy(x, y, 0.00000001, 0.00000001, 20)) #if 0, then nan
         star.append(temp)
         
     for x in np.linspace(boundary, -boundary, steps):
         temp = []
         for y in np.linspace(-boundary, boundary, steps):
-            temp.append(airy(x, y, 15, -14, 1))
+            temp.append(airy(x, y, 15, -14, 2))
         planet.append(temp)
     
     for x in np.linspace(boundary, -boundary, steps):
         temp = []
         for y in np.linspace(-boundary, boundary, steps):
-            temp.append(rd.uniform(0, 0.3))
+            temp.append(rd.uniform(0, 0.8))
         noise.append(temp)
     
     frame_ideal = np.asarray(planet)    
@@ -190,9 +190,7 @@ Y_real = cube2mat(cube_real)
 
 #apply algorithm to calculate S_p
 S_pca = Y_real - LRA(Y_real, 2)
-S_p = RLPCA2(Y_real, 2)
-
-print(S_pca)
+S_p = RLPCA(Y_real, 2)
 
 #reshape matrix to final time averaged frame
 processed_frame = mat2frame(S_p)
@@ -204,7 +202,7 @@ plt.subplots_adjust(hspace=0.5)
 
 plt.subplot(2, 2, 1)
 plt.title("Ideal")
-plt.imshow(cube_ideal[0])
+plt.imshow(cube_ideal[0], vmin=0, vmax=1)
 
 plt.subplot(2, 2, 2)
 plt.title("w/ Noise")
@@ -212,10 +210,10 @@ plt.imshow(cube_real[0], vmin=0, vmax=1)
 
 plt.subplot(2, 2, 3)
 plt.title("PCA (Rank 2)")
-plt.imshow(mat2frame(S_pca), vmin=0, vmax=1)
+plt.imshow(mat2frame(S_pca))
 
 plt.subplot(2, 2, 4)
 plt.title("RLPCA ($p=2$)")
-plt.imshow(processed_frame, vmin=0, vmax=1)
+plt.imshow(processed_frame)
 
 plt.savefig("fig.png", dpi=400)
