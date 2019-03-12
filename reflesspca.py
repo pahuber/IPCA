@@ -210,10 +210,10 @@ plt.imshow(cube_real[0], vmin=0, vmax=1)
 
 plt.subplot(2, 2, 3)
 plt.title("PCA (Rank 2)")
-plt.imshow(mat2frame(S_pca))
+plt.imshow(mat2frame(S_pca), vmin=0, vmax=1)
 
 plt.subplot(2, 2, 4)
 plt.title("RLPCA ($p=2$)")
-plt.imshow(processed_frame)
+plt.imshow(processed_frame, vmin=0, vmax=1)
 
 plt.savefig("figure.png", dpi=400)
