@@ -5,10 +5,15 @@ Created on Fri Mar  1 13:43:21 2019
 @author: philipp
 """
 
+'''TO DO: use gaussian noise in 2d, rotate planet, V komponenten visualisieren'''
+
+
 import numpy as np
 import scipy as sp
 import matplotlib.pyplot as plt
 import random as rd
+
+
 
 
 '''create t x n x n data cube of t images consisting of star signal, planet signal and noise'''
@@ -16,7 +21,7 @@ def airy(x, y, x_offset, y_offset, i0):
     r = np.sqrt((x+x_offset)**2+(y+y_offset)**2)
     return i0*(2*sp.special.j1(r)/r)**2
 
-frames = 25 #corresponds to t
+frames = 10 #corresponds to t
 boundary = 30 #resolution
 steps = 80 #corresponds to n
 
@@ -28,7 +33,7 @@ for i in range(frames):
     star = []
     planet= []
     noise = []
-
+    
     for x in np.linspace(boundary, -boundary, steps):
         temp = []
         for y in np.linspace(-boundary, boundary, steps):
@@ -57,87 +62,40 @@ cube_ideal = np.asarray(cube_ideal)
 cube_real = np.asarray(cube_real)
 
 
-'''reshape data cube into t x n^2 matrix'''
-def cube2mat(A):
-    A_mat = []
-    
-    for i in range(len(A)):
-        temp = []
-        for j in A[i]:
-            for k in j:
-                temp.append(k)
-        A_mat.append(temp)
-    A_mat = np.asarray(A_mat)  
-    return A_mat
 
 
-'''PCA'''
+'''functions'''
+def cube2mat(A): #take t x n x n data cube and reshape it to t x n^2 matrix
+   return A.reshape((len(A), len(A[0])**2))
+
+def mat2frame(A): #take t x n^2 matrix and reshape it to t x n x n data cube, then take the mean to create final frame
+    A_cube = np.reshape(A, (len(A), int(np.sqrt(len(A[0]))), int(np.sqrt(len(A[0])))))
+    return np.mean(A_cube, axis = 0)
+
 def trimatmul(A, B, C):
     return np.matmul(A, np.matmul(B, C))
      
 def SVD(A):
     U, sigma, Vh = sp.linalg.svd(A)
-    #create matrix with same dimensions as A, sigma on diagonal and fill additional cols/rows with zeros if A is not quadratic
-    rows = len(A)
-    cols = len(A[0])   
-    Sigma = np.diag(sigma)
-    if rows < cols:
-        Sigma_new = []
-        for i in Sigma:
-            i = i.tolist()
-            for j in range(cols-rows):
-                i.append(0)
-            Sigma_new.append(i)
-        Sigma = Sigma_new
-    elif rows > cols:
-        Sigma = Sigma.tolist()
-        for i in range(rows-cols):
-            temp = []
-            for j in range(len(Sigma[0])):
-                temp.append(0)
-            Sigma.append(temp)
-    Sigma = np.asarray(Sigma)
+    #create corresponding matrix Sigma from list sigma
+    Sigma = np.zeros((len(A), len(A[0])))
+    for i in range(len(sigma)):
+        Sigma[i][i] = sigma[i]
     return U, Sigma, Vh
 
 def LRA(A, rank):
-    U, Sigma, Vh = SVD(A)
-    #calculate Sigma_r
-    Sigma_r = []
-    for i in range(rank):
-        temp = []
-        for j in range(rank):
-            temp.append(Sigma[i][j])
-        Sigma_r.append(temp)
-    Sigma_r = np.asarray(Sigma_r)
-    #calculate U_r
-    U_r = []
-    m = len(U)
-    for i in range(m):
-        temp = []
-        for j in range(rank):
-            temp.append(U[i][j])
-        U_r.append(temp)
-    U_r = np.asarray(U_r)
-    #calculate Vh_r
-    Vh_r = []
-    n = len(Vh[0])
-    for i in range(rank):
-        temp = []
-        for j in range(n):
-            temp.append(Vh[i][j])
-        Vh_r.append(temp)
-    Vh_r = np.asarray(Vh_r)
-    #calculate L
+    U, Sigma, Vh = SVD(A)    
+    U_r = np.compress(np.ones(rank), U, axis = 1)
+    Sigma_r = np.compress(np.ones(rank), np.compress(np.ones(rank), Sigma, axis = 0), axis = 1)
+    Vh_r = np.compress(np.ones(rank), Vh, axis = 0)
     L = trimatmul(U_r, Sigma_r, Vh_r)
-    #set negative parts of L to zero
-    for i in range(len(L)):
-        for j in range(len(L[0])):
-            if L[i][j] < 0:
-                L[i][j] = 0
+    #only keep positive parts of L, i.e. set negative parts of L to zero
+    L = L.clip(min = 0)
     return L
+
+def PCA(Y, rank):
+    return Y - LRA(Y, rank)
     
-    
-'''reference-less PCA'''    
 def RLPCA(Y, p):   
     def S_r(rank):
         if rank == 0:
@@ -145,42 +103,13 @@ def RLPCA(Y, p):
         return Y - LRA(Y - S_r(rank-1), rank)
     return S_r(p)
 
-#alternative calculation, yields different result ?!?!?
-def RLPCA2(Y, p):
+def RLPCA2(Y, p): #alternative calculation, yields different result ?!?!?
     S = Y - LRA(Y, 1)
     for i in range(1, p+1):
         S = Y - LRA(S, i)
     return S
 
 
-'''reshape t x n^2 matrix back to time averaged n x n matrix, i. e. final processed frame'''
-def mat2frame(A):
-    #create matrix with dimensions of original image containing only zeros
-    summed = []
-    for i in range(steps):
-        temp = []
-        for j in range(steps):
-            temp.append(0)
-        summed.append(temp)
-    summed = np.asarray(summed)
-    #create a n x n matrix out of every row in the t x n^2 matrix and sum it to matrix summed
-    temp_row = []
-    temp_matrix = []
-    counter = 0
-    for row in A:
-        for i in row:
-            temp_row.append(i)
-            counter += 1
-            #print(temp_row)
-            if counter == steps:
-                temp_matrix.append(temp_row)
-                temp_row = []
-                counter = 0
-        summed = np.add(summed, np.asarray(temp_matrix))
-        temp_matrix = []
-        
-    processed_frame = 1/frames*summed
-    return processed_frame
 
 
 '''algorithm process'''
@@ -188,12 +117,14 @@ def mat2frame(A):
 Y_ideal = cube2mat(cube_ideal)
 Y_real = cube2mat(cube_real)
 
-#apply algorithm to calculate S_p
-S_pca = Y_real - LRA(Y_real, 2)
+#apply RLPCA algorithm to calculate S_p
+S_PCA = PCA(Y_real, 2)
 S_p = RLPCA(Y_real, 2)
 
 #reshape matrix to final time averaged frame
 processed_frame = mat2frame(S_p)
+
+
 
 
 '''make plot'''
@@ -205,12 +136,12 @@ plt.title("Ideal")
 plt.imshow(cube_ideal[0], vmin=0, vmax=1)
 
 plt.subplot(2, 2, 2)
-plt.title("w/ Noise")
-plt.imshow(cube_real[0], vmin=0, vmax=1)
+plt.title("Real")
+plt.imshow(np.mean(cube_real, axis = 0), vmin=0, vmax=1)
 
 plt.subplot(2, 2, 3)
 plt.title("PCA (Rank 2)")
-plt.imshow(mat2frame(S_pca), vmin=0, vmax=1)
+plt.imshow(mat2frame(S_PCA), vmin=0, vmax=1)
 
 plt.subplot(2, 2, 4)
 plt.title("RLPCA ($p=2$)")
