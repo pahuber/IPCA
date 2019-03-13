@@ -5,7 +5,7 @@ Created on Fri Mar  1 13:43:21 2019
 @author: philipp
 """
 
-'''TO DO: use gaussian noise in 2d, rotate planet, V komponenten visualisieren'''
+'''TO DO: use gaussian noise in 2d, V komponenten visualisieren'''
 
 
 import numpy as np
@@ -25,7 +25,7 @@ def airy(x, y, x_offset, y_offset, i0):
 frames = 25 #corresponds to t
 boundary = 30 #resolution
 steps = 80 #corresponds to n
-max_ang = 270
+angles = np.linspace(0, 70, frames)
 
 cube_ideal = []
 cube_real = []
@@ -35,9 +35,7 @@ for i in range(frames):
     star = []
     planet= []
     noise = []
-    #current_ang = 10
-    current_ang = np.linspace(0, max_ang, frames)[i]
-    #print(current_ang)
+    current_ang = angles[i]
     
     for x in np.linspace(boundary, -boundary, steps):
         temp = []
@@ -76,6 +74,9 @@ def cube2mat(A): #take t x n x n data cube and reshape it to t x n^2 matrix
 
 def mat2frame(A): #take t x n^2 matrix and reshape it to t x n x n data cube, then take the mean to create final frame
     A_cube = np.reshape(A, (len(A), int(np.sqrt(len(A[0]))), int(np.sqrt(len(A[0])))))
+    #derotate each frame
+    for i in range(len(A_cube)):
+        A_cube[i] = ndimage.rotate(A_cube[i], -1*angles[i], reshape = False)
     return np.mean(A_cube, axis = 0)
 
 def trimatmul(A, B, C):
@@ -106,7 +107,7 @@ def RLPCA(Y, p):
     def S_r(rank):
         if rank == 0:
             return Y - LRA(Y, 1)
-        return Y - LRA(Y - S_r(rank-1), rank) #implement rotation
+        return Y - LRA(Y - S_r(rank-1), rank)
     return S_r(p)
 
 def RLPCA2(Y, p): #alternative calculation, yields different result ?!?!?
@@ -124,8 +125,8 @@ Y_ideal = cube2mat(cube_ideal)
 Y_real = cube2mat(cube_real)
 
 #apply RLPCA algorithm to calculate S_p
-S_PCA = PCA(Y_real, 2)
-S_p = RLPCA(Y_real, 2)
+S_PCA = PCA(Y_real, 10)
+S_p = RLPCA(Y_real, 10)
 
 #reshape matrix to final time averaged frame
 processed_frame = mat2frame(S_p)
@@ -140,17 +141,21 @@ plt.subplots_adjust(hspace=0.5)
 plt.subplot(2, 2, 1)
 plt.title("Ideal")
 plt.imshow(cube_ideal[0], vmin=0, vmax=1)
+plt.colorbar()
 
 plt.subplot(2, 2, 2)
 plt.title("Real")
-plt.imshow(cube_real[0], vmin=0, vmax=1)
+plt.imshow(mat2frame(cube2mat(cube_real)), vmin=0, vmax=1)
+plt.colorbar()
 
 plt.subplot(2, 2, 3)
-plt.title("PCA (Rank 2)")
+plt.title("PCA (Rank 10)")
 plt.imshow(mat2frame(S_PCA))
+plt.colorbar()
 
 plt.subplot(2, 2, 4)
-plt.title("RLPCA ($p=2$)")
+plt.title("RLPCA ($p=10$)")
 plt.imshow(processed_frame)
+plt.colorbar()
 
 plt.savefig("figure.png", dpi=400)
