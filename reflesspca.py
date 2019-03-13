@@ -10,6 +10,7 @@ Created on Fri Mar  1 13:43:21 2019
 
 import numpy as np
 import scipy as sp
+from scipy import ndimage
 import matplotlib.pyplot as plt
 import random as rd
 
@@ -21,9 +22,10 @@ def airy(x, y, x_offset, y_offset, i0):
     r = np.sqrt((x+x_offset)**2+(y+y_offset)**2)
     return i0*(2*sp.special.j1(r)/r)**2
 
-frames = 10 #corresponds to t
+frames = 25 #corresponds to t
 boundary = 30 #resolution
 steps = 80 #corresponds to n
+max_ang = 270
 
 cube_ideal = []
 cube_real = []
@@ -33,6 +35,9 @@ for i in range(frames):
     star = []
     planet= []
     noise = []
+    #current_ang = 10
+    current_ang = np.linspace(0, max_ang, frames)[i]
+    #print(current_ang)
     
     for x in np.linspace(boundary, -boundary, steps):
         temp = []
@@ -52,14 +57,15 @@ for i in range(frames):
             temp.append(rd.uniform(0, 0.8))
         noise.append(temp)
     
-    frame_ideal = np.asarray(planet)    
-    frame_real = np.asarray(star) + np.asarray(planet) + np.asarray(noise)
-
+    frame_ideal = ndimage.rotate(np.array(planet), current_ang, reshape = False)
+    frame_real = np.array(star) + ndimage.rotate(np.array(planet), current_ang, reshape = False) + np.array(noise)
+    #frame_real = ndimage.rotate(frame_real, current_ang, reshape = False)
+    
     cube_ideal.append(frame_ideal)
     cube_real.append(frame_real)    
     
-cube_ideal = np.asarray(cube_ideal)
-cube_real = np.asarray(cube_real)
+cube_ideal = np.array(cube_ideal)
+cube_real = np.array(cube_real)
 
 
 
@@ -100,7 +106,7 @@ def RLPCA(Y, p):
     def S_r(rank):
         if rank == 0:
             return Y - LRA(Y, 1)
-        return Y - LRA(Y - S_r(rank-1), rank)
+        return Y - LRA(Y - S_r(rank-1), rank) #implement rotation
     return S_r(p)
 
 def RLPCA2(Y, p): #alternative calculation, yields different result ?!?!?
@@ -137,14 +143,14 @@ plt.imshow(cube_ideal[0], vmin=0, vmax=1)
 
 plt.subplot(2, 2, 2)
 plt.title("Real")
-plt.imshow(np.mean(cube_real, axis = 0), vmin=0, vmax=1)
+plt.imshow(cube_real[0], vmin=0, vmax=1)
 
 plt.subplot(2, 2, 3)
 plt.title("PCA (Rank 2)")
-plt.imshow(mat2frame(S_PCA), vmin=0, vmax=1)
+plt.imshow(mat2frame(S_PCA))
 
 plt.subplot(2, 2, 4)
 plt.title("RLPCA ($p=2$)")
-plt.imshow(processed_frame, vmin=0, vmax=1)
+plt.imshow(processed_frame)
 
 plt.savefig("figure.png", dpi=400)
