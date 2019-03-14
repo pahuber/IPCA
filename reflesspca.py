@@ -80,7 +80,6 @@ def mat2frame(A, angles = None): #take t x n^2 matrix and reshape it to t x n x 
     A_cube = np.reshape(A, (len(A), int(np.sqrt(len(A[0]))), int(np.sqrt(len(A[0])))))
     #derotate each frame if angles list given
     if angles is not None:
-        print("HELLLOOOO")
         for i in range(len(A_cube)):
             A_cube[i] = ndimage.rotate(A_cube[i], -1*angles[i], reshape = False)
     return np.mean(A_cube, axis = 0)
@@ -209,7 +208,7 @@ processed_frame_2 = mat2frame(S_p_2)
 
 
 
-'''make plot for simulated data'''
+'''make plot for real data'''
 plt.suptitle("Real Exoplanet")
 plt.subplots_adjust(hspace=0.5)
 
