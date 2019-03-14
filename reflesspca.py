@@ -110,7 +110,7 @@ def RLPCA(Y, p):
         return Y - LRA(Y - S_r(rank-1), rank)
     return S_r(p)
 
-def RLPCA2(Y, p): #alternative calculation, yields different result ?!?!?
+def RLPCA2(Y, p): #alternative calculation, yields better result ?!?!?
     S = Y - LRA(Y, 1)
     for i in range(1, p+1):
         S = Y - LRA(S, i)
@@ -126,7 +126,7 @@ Y_real = cube2mat(cube_real)
 
 #apply RLPCA algorithm to calculate S_p
 S_PCA = PCA(Y_real, 10)
-S_p = RLPCA(Y_real, 10)
+S_p = RLPCA2(Y_real, 10)
 
 #reshape matrix to final time averaged frame
 processed_frame = mat2frame(S_p)
