@@ -10,9 +10,6 @@ import scipy as sp
 from scipy import ndimage
 
 
-'''TO DO: implement rotation theta, implement red'''
-
-
 def cube2mat(A): #take t x n x n data cube and reshape it to t x n^2 matrix
    return A.reshape((len(A), len(A[0])**2))
 

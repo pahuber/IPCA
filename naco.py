@@ -35,7 +35,7 @@ with open("input/parang.txt") as file:
 
 '''process data'''
 rank_pca = 10
-rank_rlpca = 200
+rank_rlpca = 10
 
 frame_pca = PCA(data_cube, rank_pca, parangs)
 frame_rlpca = RLPCA(data_cube, rank_rlpca, parangs)
@@ -58,7 +58,7 @@ plt.colorbar()
 
 plt.subplot(2, 2, 3)
 plt.title("RLPCA (Rank " + str(rank_rlpca) + ")")
-plt.imshow(frame_rlpca, origin = "lower", vmax=8)
+plt.imshow(frame_rlpca, origin = "lower", vmax=7)
 plt.colorbar()
 
 #plt.subplot(2, 2, 4)
