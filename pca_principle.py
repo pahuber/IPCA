@@ -48,4 +48,4 @@ plt.title("A-B")
 plt.imshow(A-B, vmin=0, vmax=12)
 plt.colorbar()
 
-plt.savefig("principle.png", dpi=300)
+#plt.savefig("principle.png", dpi=300)

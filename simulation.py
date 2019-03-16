@@ -13,9 +13,11 @@ import scipy as sp
 from scipy import ndimage
 import matplotlib.pyplot as plt
 import random as rd
-from rlpca import cube2mat, PCA, RLPCA, mat2frame
+from rlpca import PCA, RLPCA, red, cube2mat
+import time
 
 
+start = time.time()
 
 
 '''create t x n x n data cube of t images consisting of star signal, planet signal and noise'''
@@ -23,7 +25,7 @@ def airy(x, y, x_offset, y_offset, i0):
     r = np.sqrt((x+x_offset)**2+(y+y_offset)**2)
     return i0*(2*sp.special.j1(r)/r)**2
 
-frames = 25 #corresponds to t
+frames = 50 #corresponds to t
 boundary = 30 #resolution
 steps = 80 #corresponds to n
 angles = np.linspace(0, 70, frames)
@@ -70,18 +72,11 @@ cube_real = np.array(cube_real)
 
 
 '''algorithm process for simulated data'''
-#reshape data cubes to matrices Y
-Y_ideal = cube2mat(cube_ideal)
-Y_real = cube2mat(cube_real)
+rank_pca = 10
+rank_rlpca = 10
 
-#apply RLPCA algorithm to calculate S_p
-rank = 10
-S_PCA = PCA(Y_real, rank)
-S_p = RLPCA(Y_real, rank)
-
-#reshape matrix to final time averaged frame
-processed_frame = mat2frame(S_p, angles)
-
+frame_pca = PCA(cube_real, rank_pca, angles)
+frame_rlpca = RLPCA(cube_real, rank_rlpca, angles)
 
 
 
@@ -96,18 +91,20 @@ plt.colorbar()
 
 plt.subplot(2, 2, 2)
 plt.title("Real")
-plt.imshow(mat2frame(cube2mat(cube_real), angles), vmin=0, vmax=1)
+plt.imshow(red(cube2mat(cube_real), angles), vmin=0, vmax=1)
 plt.colorbar()
 
 plt.subplot(2, 2, 3)
-plt.title("PCA (Rank " + str(rank) + ")")
-plt.imshow(mat2frame(S_PCA, angles))
+plt.title("PCA (Rank " + str(rank_pca) + ")")
+plt.imshow(frame_pca)
 plt.colorbar()
 
 plt.subplot(2, 2, 4)
-plt.title("RLPCA (Rank " + str(rank) + ")", fontsize = 10)
-plt.imshow(processed_frame)
+plt.title("RLPCA (Rank " + str(rank_rlpca) + ")", fontsize = 10)
+plt.imshow(frame_rlpca)
 plt.colorbar()
 
-plt.savefig("output/simulated.png", dpi=400)
+plt.savefig("output/simulation.png", dpi=400)
 plt.show()
+
+print(time.time() - start)
