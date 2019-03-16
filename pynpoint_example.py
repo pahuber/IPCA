@@ -8,7 +8,7 @@ Created on Fri Mar  1 13:43:21 2019
 
 import numpy as np
 import matplotlib.pyplot as plt
-from rlpca import PCA, RLPCA
+from rpca import PCA, RPCA
 import time
 import h5py
 
@@ -33,10 +33,10 @@ data_cube = stack.value
 
 '''process data'''
 rank_pca = 20
-rank_rlpca = 263
+rank_rpca = 263
 
 frame_pca = PCA(data_cube, rank_pca, parangs)
-frame_rlpca = RLPCA(data_cube, rank_rlpca, parangs)
+frame_rpca = RPCA(data_cube, rank_rpca, parangs)
 
 
 
@@ -55,8 +55,8 @@ plt.imshow(frame_pca, origin = "lower")
 plt.colorbar()
 
 plt.subplot(2, 2, 3)
-plt.title("RLPCA (Rank " + str(rank_rlpca) + ")")
-plt.imshow(frame_rlpca, origin = "lower", vmax=7)
+plt.title("RPCA (Rank " + str(rank_rpca) + ")")
+plt.imshow(frame_rpca, origin = "lower", vmax=7)
 plt.colorbar()
 
 #plt.subplot(2, 2, 4)
