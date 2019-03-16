@@ -33,7 +33,7 @@ data_cube = stack.value
 
 '''process data'''
 rank_pca = 20
-rank_rlpca = 50
+rank_rlpca = 263
 
 frame_pca = PCA(data_cube, rank_pca, parangs)
 frame_rlpca = RLPCA(data_cube, rank_rlpca, parangs)
