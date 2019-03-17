@@ -1,5 +1,6 @@
-''' Contains the functions necessary to perform iterative principal components
-    analysis (IPCA) with ADI data of exoplanets and disks.
+'''
+Contains the functions necessary to perform iterative principal components
+analysis (IPCA) with ADI data of exoplanets and disks.
 '''
 
 
@@ -70,3 +71,8 @@ def IPCA(A_cube, p, angles = None): #takes an unprocessed data cube, a max rank 
     for i in range(1, p+1):
         S = Y - LRA(Y-theta(red(S, angles), A_cube, angles), i)
     return red(S, angles)
+    
+    
+    
+test = np.array([[3, 2, 3], [2, 20, 4], [1, 3, 1]])
+print(SVD(test)[1])

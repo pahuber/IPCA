@@ -1,5 +1,6 @@
-''' Performs iterative principal component analysis (IPCA) with simulated ADI
-    data of an exoplanet.
+'''
+Performs iterative principal component analysis (IPCA) with simulated ADI
+data of an exoplanet.
 '''
 
 

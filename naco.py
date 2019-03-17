@@ -1,5 +1,6 @@
-''' Performs iterative principal component analysis (IPCA) with ADI data from
-    the NACO instrument at VLT.
+'''
+Performs iterative principal component analysis (IPCA) with ADI data from
+the NACO instrument at VLT.
 '''
 
 
