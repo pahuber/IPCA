@@ -13,7 +13,7 @@ import scipy as sp
 from scipy import ndimage
 import matplotlib.pyplot as plt
 import random as rd
-from rpca import PCA, RPCA, red, cube2mat
+from ipca import PCA, IPCA, red, cube2mat
 import time
 
 
@@ -73,10 +73,10 @@ cube_real = np.array(cube_real)
 
 '''algorithm process for simulated data'''
 rank_pca = 10
-rank_rpca = 10
+rank_ipca = 10
 
 frame_pca = PCA(cube_real, rank_pca, angles)
-frame_rpca = RPCA(cube_real, rank_rpca, angles)
+frame_ipca = IPCA(cube_real, rank_ipca, angles)
 
 
 
@@ -100,8 +100,8 @@ plt.imshow(frame_pca)
 plt.colorbar()
 
 plt.subplot(2, 2, 4)
-plt.title("RPCA (Rank " + str(rank_rpca) + ")", fontsize = 10)
-plt.imshow(frame_rpca)
+plt.title("IPCA (Rank " + str(rank_ipca) + ")", fontsize = 10)
+plt.imshow(frame_ipca)
 plt.colorbar()
 
 plt.savefig("output/simulation.png", dpi=400)

@@ -66,7 +66,7 @@ def PCA(A_cube, rank, angles = None): #takes an unprocessed data cube and an ang
     S = Y - LRA(Y, rank)
     return red(S, angles)
 
-def RPCA(A_cube, p, angles = None):
+def IPCA(A_cube, p, angles = None):
     Y = cube2mat(A_cube)
     S = Y - LRA(Y, 1) #S_0
     for i in range(1, p+1):

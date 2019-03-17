@@ -9,7 +9,7 @@ Created on Fri Mar  1 13:43:21 2019
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits
-from rpca import PCA, RPCA
+from ipca import PCA, IPCA
 import time
 
 
@@ -35,10 +35,10 @@ with open("input/parang.txt") as file:
 
 '''process data'''
 rank_pca = 10
-rank_rpca = 10
+rank_ipca = 10
 
 frame_pca = PCA(data_cube, rank_pca, parangs)
-frame_rpca = RPCA(data_cube, rank_rpca, parangs)
+frame_ipca = IPCA(data_cube, rank_ipca, parangs)
 
 
 
@@ -57,8 +57,8 @@ plt.imshow(frame_pca, origin = "lower")
 plt.colorbar()
 
 plt.subplot(2, 2, 3)
-plt.title("RPCA (Rank " + str(rank_rpca) + ")")
-plt.imshow(frame_rpca, origin = "lower", vmax=7)
+plt.title("IPCA (Rank " + str(rank_ipca) + ")")
+plt.imshow(frame_ipca, origin = "lower", vmax=7)
 plt.colorbar()
 
 #plt.subplot(2, 2, 4)
