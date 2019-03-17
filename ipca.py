@@ -50,7 +50,7 @@ def red(S, angles = None): #takes t x n^2 matrix S, reshapes it to cube S_cube a
             S_cube[i] = ndimage.rotate(S_cube[i], -1*angles[i], reshape = False)
     return np.mean(S_cube, axis = 0)
     
-def theta(frame, original_cube, angles = None): #takes a (PCA processed) frame, sets negative parts of it to zero, reshapes it into t x n x n cube and rotates frames according to list
+def theta(frame, original_cube, angles = None): #takes a (PCA processed) frame, sets negative parts of it to zero, reshapes it into t x n x n cube, rotates frames according to list and returns t x n^2 matrix
     d = frame.clip(min = 0)
     d_cube = frame2cube(d, original_cube)
     if angles is not None:
@@ -64,7 +64,7 @@ def PCA(A_cube, rank, angles = None): #takes an unprocessed data cube and an ang
     S = Y - LRA(Y, rank)
     return red(S, angles)
 
-def IPCA(A_cube, p, angles = None):
+def IPCA(A_cube, p, angles = None): #takes an unprocessed data cube, a max rank and an angles list and returns IPCA processed frame
     Y = cube2mat(A_cube)
     S = Y - LRA(Y, 1) #S_0
     for i in range(1, p+1):

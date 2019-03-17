@@ -66,40 +66,47 @@ cube_real = np.array(cube_real)
 
 
 
-'''algorithm process for simulated data'''
+'''process data'''
 rank_pca = 10
-rank_ipca = 10
+rank_ipca = 50
 
 frame_pca = PCA(cube_real, rank_pca, angles)
-frame_ipca = IPCA(cube_real, rank_ipca, angles)
+#frame_ipca = IPCA(cube_real, rank_ipca, angles)
+#np.savetxt("output/arrays/simulation_" + str(rank_ipca) + ".txt", frame_ipca)
+frame_ipca = np.loadtxt("output/arrays/simulation_" + str(rank_ipca) + ".txt")
 
 
 
-'''plot'''
-plt.suptitle("Simulated Exoplanet")
-plt.subplots_adjust(hspace=0.5)
 
-plt.subplot(2, 2, 1)
-plt.title("Ideal")
-plt.imshow(cube_ideal[0], vmin=0, vmax=1)
-plt.colorbar()
+'''plot data'''
+plt.suptitle("Simulated Exoplanet Imaging Data", y = 0.8)
+plt.subplots_adjust(wspace=0.6)
+font = 8
+font_title = 10
 
-plt.subplot(2, 2, 2)
-plt.title("Real")
-plt.imshow(red(cube2mat(cube_real), angles), vmin=0, vmax=1)
-plt.colorbar()
+plt.subplot(1, 3, 1)
+plt.title("Unprocessed", fontsize = font_title)
+plt.imshow(np.mean(cube_real, axis = 0), origin = "lower", extent = [-0.8235, 0.8235, -0.8235, 0.8235])
+plt.ylabel("R. A. offset [arcsec]", fontsize = font)
+plt.xlabel("Dec. offset [arcsec]", fontsize = font)
+plt.tick_params(labelsize=font)
+plt.colorbar(fraction = 0.0455).ax.tick_params(labelsize=font)
 
-plt.subplot(2, 2, 3)
-plt.title("PCA (Rank " + str(rank_pca) + ")")
-plt.imshow(frame_pca)
-plt.colorbar()
+plt.subplot(1, 3, 2)
+plt.title("PCA (Rank " + str(rank_pca) + ")", fontsize = font_title)
+plt.imshow(frame_pca, origin = "lower", extent = [-0.8235, 0.8235, -0.8235, 0.8235])
+plt.xlabel("Dec. offset [arcsec]", fontsize = font)
+plt.tick_params(labelsize=font)
+plt.colorbar(fraction = 0.0455).ax.tick_params(labelsize=font)
 
-plt.subplot(2, 2, 4)
-plt.title("IPCA (Rank " + str(rank_ipca) + ")", fontsize = 10)
-plt.imshow(frame_ipca)
-plt.colorbar()
+plt.subplot(1, 3, 3)
+plt.title("IPCA (Rank " + str(rank_ipca) + ")", fontsize = font_title)
+plt.imshow(frame_ipca, origin = "lower", extent = [-0.8235, 0.8235, -0.8235, 0.8235])
+plt.xlabel("Dec. offset [arcsec]", fontsize = font)
+plt.tick_params(labelsize=font)
+plt.colorbar(fraction = 0.0455).ax.tick_params(labelsize=font)
 
-plt.savefig("output/simulation.png", dpi=400)
+plt.savefig("output/simulation_" + str(rank_ipca) + ".png", dpi=400)
 plt.show()
 
 print(time.time() - start)
