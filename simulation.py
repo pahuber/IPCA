@@ -1,11 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar  1 13:43:21 2019
-
-@author: philipp
-"""
-
-'''TO DO: use gaussian noise in 2d, V komponenten visualisieren'''
+''' Performs iterative principal component analysis (IPCA) with simulated ADI
+    data of an exoplanet.
+'''
 
 
 import numpy as np

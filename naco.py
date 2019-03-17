@@ -1,9 +1,6 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Fri Mar  1 13:43:21 2019
-
-@author: philipp
-"""
+''' Performs iterative principal component analysis (IPCA) with ADI data from
+    the NACO instrument at VLT.
+'''
 
 
 import numpy as np

@@ -1,9 +1,7 @@
-# -*- coding: utf-8 -*-
-"""
-Created on Sat Mar 16 11:49:40 2019
+''' Contains the functions necessary to perform iterative principal components
+    analysis (IPCA) with ADI data of exoplanets and disks.
+'''
 
-@author: philipp
-"""
 
 import numpy as np
 import scipy as sp
