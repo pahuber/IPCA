@@ -70,9 +70,13 @@ def IPCA(A_cube, p, angles = None): #takes an unprocessed data cube, a max rank 
     S = Y - LRA(Y, 1) #S_0
     for i in range(1, p+1):
         S = Y - LRA(Y-theta(red(S, angles), A_cube, angles), i)
-    return red(S, angles)
+        V = Y - theta(red(S, angles), A_cube, angles)
+    return red(S, angles), V
     
-    
-    
-test = np.array([[3, 2, 3], [2, 20, 4], [1, 3, 1]])
-print(SVD(test)[1])
+def IPCA_V(A_cube, p, angles = None): #IPCA funtion to visualize frame just containing the star
+    Y = cube2mat(A_cube)
+    S = Y - LRA(Y, 1) #S_0
+    for i in range(1, p+1):
+        #S = Y - LRA(Y-theta(red(S, angles), A_cube, angles), i)
+        V = Y - theta(red(S, angles), A_cube, angles)
+    return V

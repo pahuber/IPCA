@@ -43,7 +43,7 @@ frame_ipca = np.loadtxt("output/arrays/pynpoint_example_" + str(rank_ipca) + ".t
 
 
 '''plot data'''
-plt.suptitle("Beta Pic b - NACO Exoplanet Imaging Data", y = 0.8)
+plt.suptitle("Beta Pic b", y = 0.8)
 plt.subplots_adjust(wspace=0.6)
 font = 8
 font_title = 10
