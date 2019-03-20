@@ -11,17 +11,21 @@ from ipca import PCA, IPCA
 import time
 
 
+input_path = "/home/philipp/Documents/BachelorProjectInput"
+output_path = "/home/Dropbox/Dropbox/1_Philipp/1_UZH/8_FS19/BachelorProject/IPCA/output"
+
+
 start = time.time()
 
 
 '''get data'''
-images = fits.open('input/stack100_rad1.6as.fits')
+images = fits.open(input_path + '/stack100_rad1.6as.fits')
 #images.info()
 data_cube = images[0].data
 
 #import angles list
 parangs = []
-with open("input/parang.txt") as file:
+with open(input_path + "/parang.txt") as file:
     counter = 0    
     for line in file.readlines():
         if counter != 0:
@@ -34,11 +38,12 @@ with open("input/parang.txt") as file:
 '''process data'''
 rank_pca = 10
 rank_ipca = 230
+pmin = 8
 
 frame_pca = PCA(data_cube, rank_pca, parangs)
-#frame_ipca = IPCA(data_cube, rank_ipca, parangs)
-#np.savetxt("output/arrays/naco_" + str(rank_ipca) + ".txt", frame_ipca)
-frame_ipca = np.loadtxt("output/arrays/naco_230.txt")
+#frame_ipca = IPCA(data_cube, rank_ipca, pmin, parangs)
+#np.savetxt(output_path + "/arrays/naco_" + str(pmin) + "_" + str(rank_ipca) + ".txt", frame_ipca)
+frame_ipca = np.loadtxt(output_path + "/arrays/naco_" + str(pmin) + "_" + str(rank_ipca) + ".txt")
 
 
 
@@ -67,7 +72,7 @@ frame_ipca = np.loadtxt("output/arrays/naco_230.txt")
 #plt.title("V from Y - D")
 #plt.imshow(V_old_frame)
 #plt.colorbar()
-#plt.savefig("output/naco_comparison.png", dpi = 400)
+#plt.savefig(output_path + "/naco_comparison.png", dpi = 400)
 #plt.show()
 
 
@@ -96,13 +101,13 @@ plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.045).ax.tick_params(labelsize=font)
 
 plt.subplot(1, 3, 3)
-plt.title("IPCA (Rank " + str(rank_ipca) + ")", fontsize = font_title)
-plt.imshow(frame_ipca, origin = "lower", vmax=7, extent = [-0.8235, 0.8235, -0.8235, 0.8235])
+plt.title("IPCA [" + str(pmin) + ", " + str(rank_ipca) + "]", fontsize = font_title)
+plt.imshow(frame_ipca, origin = "lower", vmax = 7, extent = [-0.8235, 0.8235, -0.8235, 0.8235])
 plt.xlabel("Dec. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.045).ax.tick_params(labelsize=font)
 
-plt.savefig("output/naco_" + str(rank_ipca) + ".png", dpi=400)
+plt.savefig(output_path + "/naco_" + str(pmin) + "_" + str(rank_ipca) + ".png", dpi=400)
 plt.show()
 
 print(time.time() - start)
