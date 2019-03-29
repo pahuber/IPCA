@@ -36,12 +36,7 @@ def LRA(A, rank):
     U_r = U[:, :rank]
     Sigma_r = Sigma[:rank, :rank]
     Vh_r = Vh[:rank, :]
-    #U_r = np.compress(np.ones(rank), U, axis = 1)
-    #Sigma_r = np.compress(np.ones(rank), np.compress(np.ones(rank), Sigma, axis = 0), axis = 1)
-    #Vh_r = np.compress(np.ones(rank), Vh, axis = 0)
     L = trimatmul(U_r, Sigma_r, Vh_r)
-    #only keep positive parts of L, i.e. set negative parts of L to zero
-    #L = L.clip(min = 0)
     return L
 
 def red(S, angles = None): #takes t x n^2 matrix S, reshapes it to cube S_cube and rotates each frame if angles list is given and returns mean of cube, i.e. processed frame

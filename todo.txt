@@ -2,10 +2,10 @@
 - vortschritt plotten
 - V's plotten für disk
 - pynpoint paper einlesen
-- ev. schreiben beginnen
 
 
-- pynpoint modul schrieben
+hauptziele
+- pynpoint modul schreiben
 - planeten einsetzen
 - flux vergleichen pca ipca
 
