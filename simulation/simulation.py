@@ -9,8 +9,11 @@ import scipy as sp
 from scipy import ndimage
 import matplotlib.pyplot as plt
 import random as rd
-from ipca import PCA, IPCA, red, cube2mat
 import time
+import os
+os.chdir("..")
+from ipca import PCA, IPCA
+os.chdir("simulation")
 
 
 '''decalre parameters, pca rank and ipca ranks'''
@@ -116,7 +119,7 @@ plt.xlabel("R. A. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.0455).ax.tick_params(labelsize=font)
 
-plt.savefig("output/simulation_" + str(rank_pca) + "_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".png", dpi=400)
+plt.savefig("output/plots/simulation_" + str(rank_pca) + "_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".png", dpi=400)
 plt.show()
 
 
