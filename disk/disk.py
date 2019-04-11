@@ -6,13 +6,23 @@ Performs iterative principal component analysis (IPCA) with ADI data.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits
-from ipca import PCA, IPCA, SVD, cube2mat, mat2cube, IPCA_V
 import time
+import os
+os.chdir("..")
+from ipca import PCA, IPCA
+os.chdir("disk")
+
+
+'''decalre stack, pca rank and ipca ranks'''
+stack = 10
+rank_pca = 10
+rank_ipca_init = 1
+rank_ipca_end = 2
 
 
 '''declare input and output paths'''
 input_path = "/home/philipp/Documents/BachelorProjectInput/disk/"
-output_path = "output/"
+output_path = "output/stack" + str(stack) + "/"
 
 
 '''get start time'''
@@ -20,13 +30,13 @@ start = time.time()
 
 
 '''get data'''
-images = fits.open(input_path + 'stack10.fits')
+images = fits.open(input_path + "stack" + str(stack) + ".fits")
 #images.info()
 data_cube = images[0].data
 
 #import angles list
 parangs = []
-with open(input_path + "parang_stack10.txt") as file:
+with open(input_path + "parang_stack" + str(stack) + ".txt") as file:
     counter = 0    
     for line in file.readlines():
         if counter != 0:
@@ -35,18 +45,13 @@ with open(input_path + "parang_stack10.txt") as file:
 
 
 '''process data'''
-rank_pca = 10
-
-rank_ipca_init = 5
-rank_ipca_end = 10
-
 frame_pca = PCA(data_cube, rank_pca, parangs)
-np.savetxt(output_path + "/arrays/disk_pca_" + str(rank_pca) + ".txt", frame_pca)
-#frame_ipca = np.loadtxt(output_path + "/arrays/disk_pca_" + str(rank_pca) + ".txt")
+np.savetxt(output_path + "arrays/disk_pca_" + str(rank_pca) + ".txt", frame_pca)
+#frame_ipca = np.loadtxt(output_path + "arrays/disk_pca_" + str(rank_pca) + ".txt")
 
 frame_ipca = IPCA(data_cube, rank_ipca_end, rank_ipca_init, parangs)
-np.savetxt(output_path + "/arrays/disk_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt", frame_ipca)
-#frame_ipca = np.loadtxt(output_path + "/arrays/disk_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt")
+np.savetxt(output_path + "arrays/disk_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt", frame_ipca)
+#frame_ipca = np.loadtxt(output_path + "arrays/disk_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt")
 
 
 ##'''plot V from Y vs. V from Y-D'''
@@ -72,7 +77,7 @@ np.savetxt(output_path + "/arrays/disk_ipca_" + str(rank_ipca_init) + "_" + str(
 #plt.title("V from Y - D")
 #plt.imshow(V_old_frame)
 #plt.colorbar()
-#plt.savefig(output_path + "/disk_comparison.png", dpi = 400)
+#plt.savefig(output_path + "disk_comparison.png", dpi = 400)
 #plt.show()
 
 
@@ -104,7 +109,7 @@ plt.xlabel("R. A. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.045).ax.tick_params(labelsize=font)
 
-plt.savefig(output_path + "/disk_" + str(rank_pca) + "_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".png", dpi=400)
+plt.savefig(output_path + "plots/disk_" + str(rank_pca) + "_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".png", dpi=400)
 plt.show()
 
 

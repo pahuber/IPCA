@@ -13,6 +13,16 @@ from ipca import PCA, IPCA, red, cube2mat
 import time
 
 
+'''decalre parameters, pca rank and ipca ranks'''
+frames = 50 #corresponds to t
+boundary = 30 #resolution
+steps = 80 #corresponds to n
+
+rank_pca = 10
+rank_ipca_init = 1
+rank_ipca_end = 2
+
+
 '''declare input and output paths'''
 #input_path = "/home/philipp/Documents/BachelorProjectInput/planets/"
 output_path = "output/"
@@ -27,9 +37,6 @@ def airy(x, y, x_offset, y_offset, i0):
     r = np.sqrt((x+x_offset)**2+(y+y_offset)**2)
     return i0*(2*sp.special.j1(r)/r)**2
 
-frames = 50 #corresponds to t
-boundary = 30 #resolution
-steps = 80 #corresponds to n
 angles = np.linspace(0, 70, frames)
 
 cube_ideal = []
@@ -72,11 +79,6 @@ cube_real = np.array(cube_real)
 
 
 '''process data'''
-rank_pca = 10
-
-rank_ipca_init = 5
-rank_ipca_end = 20
-
 frame_pca = PCA(cube_real, rank_pca, angles)
 np.savetxt(output_path + "arrays/simulation_pca_" + str(rank_pca) + ".txt", frame_pca)
 frame_ipca = np.loadtxt(output_path + "arrays/simulation_pca_" + str(rank_pca) + ".txt")

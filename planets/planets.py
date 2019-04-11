@@ -6,13 +6,23 @@ Performs iterative principal component analysis (IPCA) with ADI data.
 import numpy as np
 import matplotlib.pyplot as plt
 from astropy.io import fits
-from ipca import PCA, IPCA
 import time
+import os
+os.chdir("..")
+from ipca import PCA, IPCA
+os.chdir("planets")
+
+
+'''decalre stack, pca rank and ipca ranks'''
+stack = 100
+rank_pca = 10
+rank_ipca_init = 1
+rank_ipca_end = 2
 
 
 '''declare input and output paths'''
 input_path = "/home/philipp/Documents/BachelorProjectInput/planets/"
-output_path = "output/"
+output_path = "output/stack" + str(stack) + "/"
 
 
 '''get start time'''
@@ -20,13 +30,13 @@ start = time.time()
 
 
 '''get data'''
-images = fits.open(input_path + 'stack100_rad1.6as.fits')
+images = fits.open(input_path + "stack" + str(stack) + "_rad1.6as.fits")
 #images.info()
 data_cube = images[0].data
 
 #import angles list
 parangs = []
-with open(input_path + "parang.txt") as file:
+with open(input_path + "parang_stack" + str(stack) + ".txt") as file:
     counter = 0    
     for line in file.readlines():
         if counter != 0:
@@ -35,18 +45,13 @@ with open(input_path + "parang.txt") as file:
 
 
 '''process data'''
-rank_pca = 10
-
-rank_ipca_init = 5
-rank_ipca_end = 50
-
 frame_pca = PCA(data_cube, rank_pca, parangs)
 np.savetxt(output_path + "arrays/planets_pca_" + str(rank_pca) + ".txt", frame_pca)
-frame_pca = np.loadtxt(output_path + "arrays/planets_pca_" + str(rank_pca) + ".txt")
+#frame_pca = np.loadtxt(output_path + "arrays/planets_pca_" + str(rank_pca) + ".txt")
 
 frame_ipca = IPCA(data_cube, rank_ipca_end, rank_ipca_init, parangs)
 np.savetxt(output_path + "arrays/planets_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt", frame_ipca)
-frame_ipca = np.loadtxt(output_path + "arrays/planets_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt")
+#frame_ipca = np.loadtxt(output_path + "arrays/planets_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt")
 
 
 #'''plot V from Y vs. V from Y-D'''
