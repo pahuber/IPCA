@@ -1,6 +1,5 @@
 '''
-Performs iterative principal component analysis (IPCA) with ADI data from
-the NACO instrument at VLT.
+Performs iterative principal component analysis (IPCA) with ADI data.
 '''
 
 
@@ -11,21 +10,23 @@ from ipca import PCA, IPCA
 import time
 
 
-input_path = "/home/philipp/Documents/BachelorProjectInput/planet/"
-output_path = "/home/Dropbox/Dropbox/1_Philipp/1_UZH/8_FS19/BachelorProject/IPCA/output"
+'''declare input and output paths'''
+input_path = "/home/philipp/Documents/BachelorProjectInput/planets/"
+output_path = "output/"
 
 
+'''get start time'''
 start = time.time()
 
 
 '''get data'''
-images = fits.open(input_path + 'stack2_rad1.6as.fits')
+images = fits.open(input_path + 'stack100_rad1.6as.fits')
 #images.info()
 data_cube = images[0].data
 
 #import angles list
 parangs = []
-with open(input_path + "parang_stack2.txt") as file:
+with open(input_path + "parang.txt") as file:
     counter = 0    
     for line in file.readlines():
         if counter != 0:
@@ -33,20 +34,19 @@ with open(input_path + "parang_stack2.txt") as file:
         counter += 1
 
 
-
-
 '''process data'''
-rank_pca = 5
-rank_ipca = 5
-pmin = 1
+rank_pca = 10
+
+rank_ipca_init = 5
+rank_ipca_end = 50
 
 frame_pca = PCA(data_cube, rank_pca, parangs)
-frame_ipca = IPCA(data_cube, rank_ipca, pmin, parangs)
-np.savetxt(output_path + "/arrays/planet_" + str(pmin) + "_" + str(rank_ipca) + ".txt", frame_ipca)
-#frame_ipca = np.loadtxt(output_path + "/arrays/planet_" + str(pmin) + "_" + str(rank_ipca) + ".txt")
+np.savetxt(output_path + "arrays/planets_pca_" + str(rank_pca) + ".txt", frame_pca)
+frame_pca = np.loadtxt(output_path + "arrays/planets_pca_" + str(rank_pca) + ".txt")
 
-
-
+frame_ipca = IPCA(data_cube, rank_ipca_end, rank_ipca_init, parangs)
+np.savetxt(output_path + "arrays/planets_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt", frame_ipca)
+frame_ipca = np.loadtxt(output_path + "arrays/planets_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt")
 
 
 #'''plot V from Y vs. V from Y-D'''
@@ -72,15 +72,12 @@ np.savetxt(output_path + "/arrays/planet_" + str(pmin) + "_" + str(rank_ipca) + 
 #plt.title("V from Y - D")
 #plt.imshow(V_old_frame)
 #plt.colorbar()
-#plt.savefig(output_path + "/planet_comparison.png", dpi = 400)
+#plt.savefig(output_path + "planet_comparison.png", dpi = 400)
 #plt.show()
 
 
-
-
-
 '''plot data'''
-plt.suptitle("NACO Exoplanet Imaging Data", y = 0.8)
+plt.suptitle("Planetary System", y = 0.8)
 plt.subplots_adjust(wspace=0.6)
 font = 8
 font_title = 10
@@ -95,19 +92,21 @@ plt.colorbar(fraction = 0.045).ax.tick_params(labelsize=font)
 
 plt.subplot(1, 3, 2)
 plt.title("PCA (Rank " + str(rank_pca) + ")", fontsize = font_title)
-plt.imshow(frame_pca, origin = "lower", extent = [-0.8235, 0.8235, -0.8235, 0.8235])
+plt.imshow(frame_pca, origin = "lower", vmin = -3, vmax= 7, extent = [-0.8235, 0.8235, -0.8235, 0.8235])
 plt.xlabel("R. A. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.045).ax.tick_params(labelsize=font)
 
 plt.subplot(1, 3, 3)
-plt.title("IPCA [" + str(pmin) + ", " + str(rank_ipca) + "]", fontsize = font_title)
-plt.imshow(frame_ipca, origin = "lower", vmax = 7, extent = [-0.8235, 0.8235, -0.8235, 0.8235])
+plt.title("IPCA [" + str(rank_ipca_init) + ", " + str(rank_ipca_end) + "]", fontsize = font_title)
+plt.imshow(frame_ipca, origin = "lower", vmax=7, extent = [-0.8235, 0.8235, -0.8235, 0.8235])
 plt.xlabel("R. A. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.045).ax.tick_params(labelsize=font)
 
-plt.savefig(output_path + "/planet_" + str(pmin) + "_" + str(rank_ipca) + ".png", dpi=400)
+plt.savefig(output_path + "plots/planets_" + str(rank_pca) + "_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".png", dpi=400)
 plt.show()
 
+
+'''print runtime'''
 print(time.time() - start)

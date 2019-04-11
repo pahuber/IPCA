@@ -7,7 +7,7 @@ analysis (IPCA) with ADI data of exoplanets and disks.
 import numpy as np
 import scipy as sp
 from scipy import ndimage
-
+import time
 
 def cube2mat(A): #take t x n x n data cube and reshape it to t x n^2 matrix
    return A.reshape((len(A), len(A[0])**2))
@@ -56,21 +56,25 @@ def theta(frame, original_cube, angles = None): #takes a (PCA processed) frame, 
     return D
 
 def PCA(A_cube, rank, angles = None): #takes an unprocessed data cube and an angles list and returns PCA processed frame
+    print(time.strftime("%H:%M:%S", time.localtime()) + " " + "Started PCA")
     Y = cube2mat(A_cube)
     S = Y - LRA(Y, rank)
+    print(time.strftime("%H:%M:%S", time.localtime()) + " " + "Finished PCA")
     return red(S, angles)
 
 def IPCA(A_cube, pmax, pmin = 1, angles = None): #takes an unprocessed data cube, a max rank and an angles list and returns IPCA processed frame
+    print(time.strftime("%H:%M:%S", time.localtime()) + " " + "Started IPCA")    
     Y = cube2mat(A_cube)
     S = Y - LRA(Y, pmin) #S_0
     for i in range(pmin, pmax+1):
         S = Y - LRA(Y-theta(red(S, angles), A_cube, angles), i)
+        print(time.strftime("%H:%M:%S", time.localtime()) + " " + "Calculated S_" + str(i))
+    print(time.strftime("%H:%M:%S", time.localtime()) + " " + "Finished IPCA")
     return red(S, angles)
     
-def IPCA_V(A_cube, p, angles = None): #IPCA funtion to visualize frame just containing the star
+def printV(A_cube, p, angles = None): #IPCA funtion to visualize frame just containing the star
     Y = cube2mat(A_cube)
     S = Y - LRA(Y, 1) #S_0
     for i in range(1, p+1):
-        #S = Y - LRA(Y-theta(red(S, angles), A_cube, angles), i)
         V = Y - theta(red(S, angles), A_cube, angles)
     return V

@@ -13,6 +13,12 @@ from ipca import PCA, IPCA, red, cube2mat
 import time
 
 
+'''declare input and output paths'''
+#input_path = "/home/philipp/Documents/BachelorProjectInput/planets/"
+output_path = "output/"
+
+
+'''get start time'''
 start = time.time()
 
 
@@ -65,18 +71,19 @@ cube_ideal = np.array(cube_ideal)
 cube_real = np.array(cube_real)
 
 
-
-
 '''process data'''
 rank_pca = 10
-rank_ipca = 50
+
+rank_ipca_init = 5
+rank_ipca_end = 20
 
 frame_pca = PCA(cube_real, rank_pca, angles)
-#frame_ipca = IPCA(cube_real, rank_ipca, angles)
-#np.savetxt("output/arrays/simulation_" + str(rank_ipca) + ".txt", frame_ipca)
-frame_ipca = np.loadtxt("output/arrays/simulation_" + str(rank_ipca) + ".txt")
+np.savetxt(output_path + "arrays/simulation_pca_" + str(rank_pca) + ".txt", frame_pca)
+frame_ipca = np.loadtxt(output_path + "arrays/simulation_pca_" + str(rank_pca) + ".txt")
 
-
+frame_ipca = IPCA(cube_real, rank_ipca_end, rank_ipca_init, angles)
+np.savetxt(output_path + "arrays/simulation_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt", frame_ipca)
+frame_ipca = np.loadtxt(output_path + "arrays/simulation_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt")
 
 
 '''plot data'''
@@ -88,26 +95,28 @@ font_title = 10
 plt.subplot(1, 3, 1)
 plt.title("Unprocessed", fontsize = font_title)
 plt.imshow(np.mean(cube_real, axis = 0), origin = "lower", extent = [-0.8235, 0.8235, -0.8235, 0.8235])
-plt.ylabel("R. A. offset [arcsec]", fontsize = font)
-plt.xlabel("Dec. offset [arcsec]", fontsize = font)
+plt.ylabel("Dec. offset [arcsec]", fontsize = font)
+plt.xlabel("R. A. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.0455).ax.tick_params(labelsize=font)
 
 plt.subplot(1, 3, 2)
 plt.title("PCA (Rank " + str(rank_pca) + ")", fontsize = font_title)
 plt.imshow(frame_pca, origin = "lower", extent = [-0.8235, 0.8235, -0.8235, 0.8235])
-plt.xlabel("Dec. offset [arcsec]", fontsize = font)
+plt.xlabel("R. A. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.0455).ax.tick_params(labelsize=font)
 
 plt.subplot(1, 3, 3)
-plt.title("IPCA (Rank " + str(rank_ipca) + ")", fontsize = font_title)
+plt.title("IPCA [" + str(rank_ipca_init) + ", " + str(rank_ipca_end) + "]", fontsize = font_title)
 plt.imshow(frame_ipca, origin = "lower", extent = [-0.8235, 0.8235, -0.8235, 0.8235])
-plt.xlabel("Dec. offset [arcsec]", fontsize = font)
+plt.xlabel("R. A. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.0455).ax.tick_params(labelsize=font)
 
-plt.savefig("output/simulation_" + str(rank_ipca) + ".png", dpi=400)
+plt.savefig("output/simulation_" + str(rank_pca) + "_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".png", dpi=400)
 plt.show()
 
+
+'''print runtime'''
 print(time.time() - start)
