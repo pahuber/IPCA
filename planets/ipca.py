@@ -73,7 +73,7 @@ def IPCA(A_cube, pmax, pmin = 1, angles = None): #takes an unprocessed data cube
     print(time.strftime("%H:%M:%S", time.localtime()) + " " + "Finished IPCA")
     return red(S, angles)
     
-def IPCA_savesteps(output_path, interval, A_cube, pmax, pmin = 1, angles = None): #takes an unprocessed data cube, a max rank and an angles list and returns IPCA processed frame
+def IPCA_savesteps(output_path, A_cube, pmax, pmin = 1, angles = None): #takes an unprocessed data cube, a max rank and an angles list and returns IPCA processed frame
     print(time.strftime("%H:%M:%S", time.localtime()) + " " + "Started IPCA")    
     Y = cube2mat(A_cube)
     S = Y - LRA(Y, pmin) #S_0
@@ -81,8 +81,7 @@ def IPCA_savesteps(output_path, interval, A_cube, pmax, pmin = 1, angles = None)
         S = Y - LRA(Y-theta(red(S, angles), A_cube, angles), i)
         A = copy(S) #copy is necesarry! putting A=S will create a reference and yield change S when red(S, angles) is called for savetext
         if i > pmin:
-            if (i == 1) or ((i % interval) == 0 ):
-                np.savetxt(output_path + "planets_ipca_" + str(pmin) + "_" + str(i) + ".txt", red(A, angles))
+            np.savetxt(output_path + "planets_ipca_" + str(pmin) + "_" + str(i) + ".txt", red(A, angles))
         print(time.strftime("%H:%M:%S", time.localtime()) + " " + "Calculated S_" + str(i))
     print(time.strftime("%H:%M:%S", time.localtime()) + " " + "Finished IPCA")
     return red(S, angles)
