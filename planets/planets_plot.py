@@ -32,7 +32,7 @@ start = time.time()
 
 '''process data'''
 fig, axes = plt.subplots(nrows=len(rank_ipca_init_list)+1, ncols=int(rank_pca/interval)+1)
-plt.suptitle("PCA/IPCA Matrix", fontsize = 8)
+plt.suptitle("PCA/IPCA Evolution Matrix", fontsize = 8)
 #plt.xlabel("R. A. Offset [arcsec]")
 #plt.subplots_adjust(wspace=0.2)
 subplot_counter = 0
