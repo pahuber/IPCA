@@ -10,7 +10,7 @@ import time
 import os
 os.chdir("..")
 from ipca import PCA, IPCA, IPCA_savesteps
-os.chdir("planets")
+os.chdir("disk")
 
 
 '''decalre stack, pca rank and ipca ranks'''
@@ -22,7 +22,7 @@ interval = 5 #plot every 'interval' rank
 
 
 '''declare input and output paths'''
-input_path = "/home/philipp/Documents/BachelorProjectInput/planets/"
+input_path = "/home/philipp/Documents/BachelorProjectInput/disk/"
 output_path = "output/stack" + str(stack) + "/arrays_matrix/"
 
 
@@ -31,7 +31,7 @@ start = time.time()
 
 
 '''get data'''
-images = fits.open(input_path + "stack" + str(stack) + "_rad1.6as.fits")
+images = fits.open(input_path + "stack" + str(stack) + ".fits")
 #images.info()
 data_cube = images[0].data
 
@@ -49,11 +49,11 @@ with open(input_path + "parang_stack" + str(stack) + ".txt") as file:
 for i in range(1, rank_pca+1):       
     if (i == 1) or ((i % interval) == 0):
         frame_pca = PCA(data_cube, i, parangs)
-        np.savetxt(output_path + "planets_pca_" + str(i) + ".txt", frame_pca)
+        np.savetxt(output_path + "disk_pca_" + str(i) + ".txt", frame_pca)
         
 
 for init in rank_ipca_init_list:
-    frame_ipca = IPCA_savesteps(output_path, "planets", interval, data_cube, rank_ipca_end, init, parangs)
+    frame_ipca = IPCA_savesteps(output_path, "disk", interval, data_cube, rank_ipca_end, init, parangs)
     
 
 '''print runtime'''

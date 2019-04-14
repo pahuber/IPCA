@@ -10,7 +10,7 @@ import time
 import os
 os.chdir("..")
 from ipca import PCA, IPCA
-os.chdir("planets")
+os.chdir("disk")
 
 
 '''decalre stack, pca rank and ipca ranks'''
@@ -22,7 +22,7 @@ interval = 5 #plot every 'interval' rank
 
 
 '''declare input and output paths'''
-input_path = "/home/philipp/Documents/BachelorProjectInput/planets/"
+input_path = "/home/philipp/Documents/BachelorProjectInput/disk/"
 output_path = "output/stack" + str(stack) + "/"
 
 
@@ -43,7 +43,7 @@ fontsize = 2
 
 for i in range(1, rank_pca+1):
     if (i == 1) or ((i % interval) == 0):
-        im = axes.flat[subplot_counter].imshow(np.loadtxt(output_path + "arrays_matrix/planets_pca_" + str(i) + ".txt"), origin='lower', vmin=vmin, vmax=vmax, extent=[size, -size, -size, size])
+        im = axes.flat[subplot_counter].imshow(np.loadtxt(output_path + "arrays_matrix/disk_pca_" + str(i) + ".txt"), origin='lower', vmin=vmin, vmax=vmax, extent=[size, -size, -size, size])
         axes.flat[subplot_counter].set_title("PCA (Rank " + str(i) + ")", fontsize=fontsize)    
         axes.flat[subplot_counter].tick_params(labelsize=fontsize, axis='both', left=False, bottom=False, colors=(1, 1, 1, 0))
         subplot_counter += 1
@@ -54,7 +54,7 @@ for init in rank_ipca_init_list:
         subplot_counter += 1
     for end in range(init+1, rank_ipca_end+1):
         if (end == 1) or ((end % interval) == 0):
-            im = axes.flat[subplot_counter].imshow(np.loadtxt(output_path + "arrays_matrix/planets_ipca_" + str(init) + "_" + str(end) + ".txt"), origin='lower', vmin=vmin, vmax=vmax, extent=[size, -size, -size, size])
+            im = axes.flat[subplot_counter].imshow(np.loadtxt(output_path + "arrays_matrix/disk_ipca_" + str(init) + "_" + str(end) + ".txt"), origin='lower', vmin=vmin, vmax=vmax, extent=[size, -size, -size, size])
             axes.flat[subplot_counter].set_title("IPCA [" + str(init) + ", " + str(end) + "]", fontsize=fontsize)
             if init == 6 and end == 30:
                 axes.flat[subplot_counter].set_title("IPCA [" + str(init) + ", " + str(end) + "]", fontsize=fontsize, color="green")    

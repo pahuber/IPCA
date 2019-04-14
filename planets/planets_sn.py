@@ -14,10 +14,10 @@ os.chdir("planets")
 
 
 '''decalre stack, pca rank and ipca ranks'''
-stack = 2
-rank_pca = 15
-rank_ipca_init = 6
-rank_ipca_end = 30
+stack = 100
+rank_pca = 10
+rank_ipca_init = 1
+rank_ipca_end = 4
 
 
 '''declare input and output paths'''
@@ -45,13 +45,13 @@ with open(input_path + "parang_stack" + str(stack) + ".txt") as file:
 
 
 '''process data'''
-#frame_pca = PCA(data_cube, rank_pca, parangs)
-#np.savetxt(output_path + "arrays/planets_pca_" + str(rank_pca) + ".txt", frame_pca)
-frame_pca = np.loadtxt(output_path + "arrays/planets_pca_" + str(rank_pca) + ".txt")
+frame_pca = PCA(data_cube, rank_pca, parangs)
+np.savetxt(output_path + "arrays/planets_pca_" + str(rank_pca) + ".txt", frame_pca)
+#frame_pca = np.loadtxt(output_path + "arrays/planets_pca_" + str(rank_pca) + ".txt")
 
-#frame_ipca = IPCA(data_cube, rank_ipca_end, rank_ipca_init, parangs)
-#np.savetxt(output_path + "arrays/planets_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt", frame_ipca)
-frame_ipca = np.loadtxt(output_path + "arrays/planets_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt")
+frame_ipca = IPCA(data_cube, rank_ipca_end, rank_ipca_init, parangs)
+np.savetxt(output_path + "arrays/planets_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt", frame_ipca)
+#frame_ipca = np.loadtxt(output_path + "arrays/planets_ipca_" + str(rank_ipca_init) + "_" + str(rank_ipca_end) + ".txt")
 
 
 #'''plot V from Y vs. V from Y-D'''
@@ -97,14 +97,14 @@ plt.colorbar(fraction = 0.045).ax.tick_params(labelsize=font)
 
 plt.subplot(1, 3, 2)
 plt.title("PCA (Rank " + str(rank_pca) + ")", fontsize = font_title)
-plt.imshow(frame_pca, origin = "lower", extent = [-0.8235, 0.8235, -0.8235, 0.8235])
+plt.imshow(frame_pca, origin = "lower", vmin = -3, vmax= 7, extent = [-0.8235, 0.8235, -0.8235, 0.8235])
 plt.xlabel("R. A. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.045).ax.tick_params(labelsize=font)
 
 plt.subplot(1, 3, 3)
 plt.title("IPCA [" + str(rank_ipca_init) + ", " + str(rank_ipca_end) + "]", fontsize = font_title)
-plt.imshow(frame_ipca, origin = "lower", extent = [-0.8235, 0.8235, -0.8235, 0.8235])
+plt.imshow(frame_ipca, origin = "lower", vmax=7)
 plt.xlabel("R. A. offset [arcsec]", fontsize = font)
 plt.tick_params(labelsize=font)
 plt.colorbar(fraction = 0.045).ax.tick_params(labelsize=font)
