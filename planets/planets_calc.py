@@ -15,9 +15,9 @@ os.chdir("planets")
 
 '''decalre stack, pca rank and ipca ranks'''
 stack = 2
-rank_pca = 80 #maximum pca value
-rank_ipca_init_list = [1, 3, 6, 10, 15] #different inital values
-rank_ipca_end = 80 #max ipca value, must be larger than all values in init_list
+rank_pca = 40 #maximum pca value
+rank_ipca_init_list = [3, 4, 5, 6] #different inital values
+rank_ipca_end = 40 #max ipca value, must be larger than all values in init_list
 interval = 5 #plot every 'interval' rank
 
 

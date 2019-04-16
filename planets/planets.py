@@ -16,8 +16,8 @@ os.chdir("planets")
 '''decalre stack, pca rank and ipca ranks'''
 stack = 2
 rank_pca = 15
-rank_ipca_init = 6
-rank_ipca_end = 30
+rank_ipca_init = 5
+rank_ipca_end = 50
 
 
 '''declare input and output paths'''

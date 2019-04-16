@@ -14,11 +14,11 @@ os.chdir("disk")
 
 
 '''decalre stack, pca rank and ipca ranks'''
-stack = 2
-rank_pca = 80 #maximum pca value
-rank_ipca_init_list = [1, 3, 6, 10, 15] #different inital values
-rank_ipca_end = 80 #max ipca value, must be larger than all values in init_list
-interval = 5 #plot every 'interval' rank
+stack = 10
+rank_pca = 300 #maximum pca value
+rank_ipca_init_list = [1, 10, 20, 30, 40, 50, 70, 100] #different inital values
+rank_ipca_end = 300 #max ipca value, must be larger than all values in init_list
+interval = 20 #plot every 'interval' rank
 
 
 '''declare input and output paths'''
@@ -32,7 +32,7 @@ start = time.time()
 
 '''process data'''
 fig, axes = plt.subplots(nrows=len(rank_ipca_init_list)+1, ncols=int(rank_pca/interval)+1)
-plt.suptitle("PCA/IPCA Evolution Matrix (Stack " + stack + ")", fontsize = 8)
+plt.suptitle("PCA/IPCA Evolution Matrix (Stack " + str(stack) + ")", fontsize = 8)
 #plt.xlabel("R. A. Offset [arcsec]")
 #plt.subplots_adjust(wspace=0.2)
 subplot_counter = 0
@@ -56,12 +56,10 @@ for init in rank_ipca_init_list:
         if (end == 1) or ((end % interval) == 0):
             im = axes.flat[subplot_counter].imshow(np.loadtxt(output_path + "arrays_matrix/disk_ipca_" + str(init) + "_" + str(end) + ".txt"), origin='lower', vmin=vmin, vmax=vmax, extent=[size, -size, -size, size])
             axes.flat[subplot_counter].set_title("IPCA [" + str(init) + ", " + str(end) + "]", fontsize=fontsize)
-            if init == 6 and end == 30:
-                axes.flat[subplot_counter].set_title("IPCA [" + str(init) + ", " + str(end) + "]", fontsize=fontsize, color="green")    
             axes.flat[subplot_counter].tick_params(labelsize=fontsize, axis='both', left=False, bottom=False, colors=(1, 1, 1, 0))
             subplot_counter += 1
 
-fig.tight_layout()
+#fig.tight_layout()
 #plt.subplot_tool()
 fig.colorbar(im, ax=axes.ravel().tolist())
 plt.savefig(output_path +"plots/matrix.png", bbox_inches='tight', orientation="landscape", dpi=1000)
