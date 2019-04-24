@@ -14,7 +14,7 @@ os.chdir("planets")
 
 
 '''decalre stack, pca rank and ipca ranks'''
-stack = 2
+stack = 100
 rank_pca = 40 #maximum pca value
 rank_ipca_init_list = [3, 4, 5, 6] #different inital values
 rank_ipca_end = 40 #max ipca value, must be larger than all values in init_list
@@ -43,6 +43,12 @@ with open(input_path + "parang_stack" + str(stack) + ".txt") as file:
         if counter != 0:
             parangs.append(float(line.replace("\n", "")))
         counter += 1
+
+cube_firsthalf = data_cube[:len(data_cube)//2, :]
+parangs_firsthalf = parangs[:len(parangs)//2]
+
+cube_everysecond = data_cube[0::2]
+parangs_everysecond = parangs[0::2]
 
 
 '''process data'''
