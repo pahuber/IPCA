@@ -72,26 +72,26 @@ def plot_snr(ipca_init_list,
     x_axis = np.concatenate((np.array([1]), np.linspace(5, 80, len(pca_lst_inner)-1)), axis=0)
     
     plt.rc("axes", prop_cycle=(cycler("color", ["k", "r", "y", "g", "c", "b", "m"])))
-    plt.plot(x_axis, pca_lst_inner, marker=".", linestyle="--", label="PCA")
+    plt.plot(x_axis, pca_lst_inner, marker=".", linestyle=":", label="PCA")
     
-    ipca_dic = {}
-    extra = list_fraction_inner
-    
-    for j in ipca_init_list:
-        ipca_dic["{0}".format(j)]= []
-        list_fraction_inner = int((pca_ipca_end-j-1)//interval)+1
-        for i in range(list_fraction_inner):
-            ipca_dic["{0}".format(j)].append(snr_arrays[i+extra][4])
-        extra += list_fraction_inner
-        if len(ipca_dic["{0}".format(j)]) != len(pca_lst_inner):
-            ipca_dic["{0}".format(j)] = [None] * (len(pca_lst_inner)-len(ipca_dic["{0}".format(j)])) + ipca_dic["{0}".format(j)]
-        #print(ipca_dic["ipca_{0}_lst_inner".format(j)])
-        plt.plot(x_axis, ipca_dic["{0}".format(j)], marker=".", linestyle="--", label= "IPCA " + str(j))
-    
+#    ipca_dic = {}
+#    extra = list_fraction_inner
+#    
+#    for j in ipca_init_list:
+#        ipca_dic["{0}".format(j)]= []
+#        list_fraction_inner = int((pca_ipca_end-j-1)//interval)+1
+#        for i in range(list_fraction_inner):
+#            ipca_dic["{0}".format(j)].append(snr_arrays[i+extra][4])
+#        extra += list_fraction_inner
+#        if len(ipca_dic["{0}".format(j)]) != len(pca_lst_inner):
+#            ipca_dic["{0}".format(j)] = [None] * (len(pca_lst_inner)-len(ipca_dic["{0}".format(j)])) + ipca_dic["{0}".format(j)]
+#        #print(ipca_dic["ipca_{0}_lst_inner".format(j)])
+#        plt.plot(x_axis, ipca_dic["{0}".format(j)], marker=".", linestyle=":", label= "IPCA " + str(j))
+#    
     plt.title(title)
     plt.xlabel("Rank")
     plt.ylabel("SNR")
     plt.legend()
-    plt.grid()
+    plt.grid(axis="y")
     #plt.show()
     plt.savefig(output_path + name_out + ".png", dpi=1000)

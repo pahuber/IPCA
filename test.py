@@ -8,19 +8,19 @@ Created on Sat Apr 27 10:59:33 2019
 
 from astropy.io import fits
 from ipca.processing.main import IPCA, PCA
-from ipca.readwrite.fits import create_fits, read_fits
+from ipca.readwrite.fits import create_fits, read_fits, create_single_fits
 from ipca.processing.processing import evaluate_multiple
 from ipca.tool.plot import plot_matrix, plot_snr
 
 
 '''input and output paths'''
-input_path = "/home/philipp/Documents/BA_In_out/processed/planets/stack100/sn/pc1/"
-output_path = "/home/philipp/Documents/BA_In_out/processed/planets/stack100/plots/pc1/"
+input_path = "/home/philipp/Documents/BA_In_out/processed/test/stack100/arrays/pc1/"
+output_path = "/home/philipp/Documents/BA_In_out/processed/test/stack100/fits/pc1/"
 
 
 '''set variables'''
 pca_ipca_end = 80 #maximum pca/ipca value, must be larger than all values in init_list
-ipca_init_list = [1, 3, 6, 10, 15, 20, 25] #different inital values
+ipca_init_list = [6] #different inital values
 interval = 5 #plot every 'interval' rank
 stack = 100
 
@@ -53,8 +53,8 @@ name_parangs = "parang_stack" + str(stack) + ".txt"
 #         interval,
 #         input_path,
 #         output_path,
-#         prefix="planets",
-#         name_out="out",
+#         prefix="challenge",
+#         name_out="challenge",
 #         title="PCA/IPCA Evolution Matrix",
 #         vmin=None,
 #         vmax=None)
@@ -66,8 +66,19 @@ name_parangs = "parang_stack" + str(stack) + ".txt"
 #            interval,
 #            input_path,
 #            output_path,
-#            prefix="planets",
-#            name_out="planets")
+#            prefix="challenge",
+#            name_out="challenge")
+
+
+'''create single fits file'''
+create_single_fits(6,
+            80,
+            interval,
+            input_path,
+            output_path,
+            prefix="planets",
+            name_out="planets")
+
 
 
 '''create SNR plots'''
@@ -76,6 +87,6 @@ name_parangs = "parang_stack" + str(stack) + ".txt"
 #         interval,
 #         input_path,
 #         output_path,
-#         array_file_name="inner.txt",
-#         name_out="snr_inner",
+#         array_file_name="outer.txt",
+#         name_out="snr_outer",
 #         title="SNR vs. Rank")
