@@ -26,7 +26,7 @@ def read_fits(input_path,
     return data_cube, parangs
 
 
-def create_fits(ipca_init_list,
+def create_stacked_fits(ipca_init_list,
                 pca_ipca_end,
                 interval,
                 input_path,
@@ -66,6 +66,7 @@ def create_fits(ipca_init_list,
     hdu = fits.PrimaryHDU(data=data)
     hdu.writeto(os.path.join(output_path, prefix + "_pca_" + str(pca_ipca_end) + "_" + str(interval) + ".fits"))
     
+    
 def create_single_fits(ipca_init,
                 pca_ipca_end,
                 interval,
@@ -77,19 +78,3 @@ def create_single_fits(ipca_init,
 
     hdu = fits.PrimaryHDU(data=np.loadtxt(input_path + prefix + "_ipca_" + str(ipca_init) + "_" + str(pca_ipca_end) + ".txt"))
     hdu.writeto(os.path.join(output_path, prefix + "_ipca_" + str(ipca_init) + "_" + str(pca_ipca_end) + "_" + str(interval) + ".fits"))
-       
-       
-    
-#    im_shape = np.shape(np.loadtxt(input_path + prefix + "_pca_" + str(pca_ipca_end) + ".txt"))
-#    
-#    rank_list = []
-#    for i in range(1, pca_ipca_end+1):       
-#        if (i == 1 ) or ((i % interval) == 0):
-#            rank_list.append(i)
-#    
-#    data = np.zeros((len(rank_list), im_shape[0], im_shape[1]))    
-#    for i, item in enumerate(rank_list):
-#        data[i] = np.loadtxt(input_path + prefix + "_pca_" + str(int(item)) + ".txt")
-#       
-#    hdu = fits.PrimaryHDU(data=data)
-#    hdu.writeto(os.path.join(output_path, prefix + "_pca_" + str(pca_ipca_end) + "_" + str(interval) + ".fits"))
