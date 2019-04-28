@@ -1,8 +1,5 @@
-# -*- coding: utf-8 -*-
 """
-Created on Sat Apr 27 10:59:33 2019
-
-@author: philipp
+Illustrates how to properly use the functions for IPCA processing and analysis.
 """
 
 
@@ -10,7 +7,7 @@ from astropy.io import fits
 from ipca.processing.main import IPCA, PCA
 from ipca.readwrite.fits import read_fits, create_multi_frame_fits, create_single_frame_fits, create_one_single_frame_fits
 from ipca.processing.processing import evaluate_multiple
-from ipca.tool.plot import plot_matrix, plot_snr
+from ipca.tool.plot import plot_matrix, plot_snr, plot_snr_difference
 
 
 '''input and output paths'''
@@ -38,7 +35,7 @@ name_parangs = "parang_stack" + str(stack) + ".txt"
 
 
 '''calculate arrays'''
-#mat_calc(data_cube, 
+#evaluate_multiple(data_cube, 
 #         parangs,
 #         ipca_init_list,
 #         pca_ipca_end,
@@ -91,11 +88,22 @@ name_parangs = "parang_stack" + str(stack) + ".txt"
 
 
 '''create SNR plots'''
-plot_snr(ipca_init_list,
-         pca_ipca_end,
-         interval,
-         input_path,
-         output_path,
-         array_prefix="inner",
-         name_out="snr_inner",
-         title="SNR vs. Rank")
+#plot_snr(ipca_init_list,
+#         pca_ipca_end,
+#         interval,
+#         input_path,
+#         output_path,
+#         array_prefix="outer",
+#         name_out="snr_outer",
+#         title="SNR vs. Rank (Outer)")
+         
+         
+'''create IPCA/PCA SNR difference plots'''
+#plot_snr_difference(ipca_init_list,
+#             pca_ipca_end,
+#             interval,
+#             input_path,
+#             output_path,
+#             array_prefix="inner",
+#             name_out="snr_difference_inner",
+#             title="IPCA/PCA SNR Difference (Inner)")

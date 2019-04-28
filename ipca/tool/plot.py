@@ -88,3 +88,48 @@ def plot_snr(ipca_init_list,
     plt.tight_layout()
     #plt.show()
     plt.savefig(output_path + name_out + ".png", dpi=1000)
+    
+    
+def plot_snr_difference(ipca_init_list,
+             pca_ipca_end,
+             interval,
+             input_path,
+             output_path,
+             array_prefix,
+             name_out="out",
+             title="IPCA/PCA SNR Difference"):
+                 
+    x_axis = []
+    for counter, i in enumerate(range(ipca_init_list[0], pca_ipca_end+1)):       
+        if counter == 0 or ((i % interval) == 0):
+            x_axis.append(i)
+    
+    pca_lst = np.loadtxt(input_path + "pca_" + array_prefix + "_.txt")
+    
+    plt.rc("axes", prop_cycle=(cycler("color", ["k", "r", "tab:orange", "y", "g", "c", "b", "m"])))
+    plt.plot(x_axis, np.asarray(pca_lst)-np.asarray(pca_lst), marker=".", linestyle=":", label="PCA")
+        
+    ipca_dic = {}
+    my = False    
+    
+    for i in ipca_init_list:
+        ipca_dic["{0}".format(i)]= np.loadtxt(input_path + "ipca_" + array_prefix + "_" + str(i) + ".txt").tolist()
+        if len(ipca_dic["{0}".format(i)]) != len(x_axis):
+            my = True
+            diff = len(x_axis)-len(ipca_dic["{0}".format(i)])
+            ipca_dic["{0}".format(i)] = np.asarray([0] * diff + ipca_dic["{0}".format(i)])
+        ipca_dic["{0}".format(i)] = ipca_dic["{0}".format(i)]-np.asarray(pca_lst)
+        if my:
+            for j in range(diff):
+                ipca_dic["{0}".format(i)][j] = None
+        plt.plot(x_axis, np.asarray(ipca_dic["{0}".format(i)]), marker=".", linestyle=":", label= "IPCA " + str(i))
+        
+    plt.title(title)
+    plt.xlabel("Rank")
+    plt.ylabel("SNR Difference")
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2), shadow=False, ncol=4)
+    plt.grid(axis="y")
+    plt.tight_layout()
+    #plt.ylim(-5, 10)
+    #plt.show()
+    plt.savefig(output_path + name_out + ".png", dpi=1000)
