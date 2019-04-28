@@ -90,7 +90,7 @@ def create_single_frame_fits(ipca_init_list,
     for item in rank_list:
         data = np.loadtxt(input_path + prefix + "_pca_" + str(int(item)) + ".txt")
         hdu = fits.PrimaryHDU(data = data)
-        hdu.writeto(os.path.join(output_path, prefix + "_pca_" + str(pca_ipca_end) + "_single.fits"))    
+        hdu.writeto(os.path.join(output_path, prefix + "_pca_" + str(int(item)) + "_single.fits"))    
     
     
 def create_one_single_frame_fits(ipca_init,

@@ -14,8 +14,8 @@ from ipca.tool.plot import plot_matrix, plot_snr
 
 
 '''input and output paths'''
-input_path = "/home/philipp/Documents/BA_In_out/processed/planets/stack100/arrays/pc1/"
-output_path = "/home/philipp/Documents/BA_In_out/processed/planets/stack100/fits/pc1/"
+input_path = "/home/philipp/Documents/BA_In_out/processed/planets/stack100/snr/pc1/"
+output_path = "/home/philipp/Documents/BA_In_out/processed/planets/stack100/plots/pc1/"
 
 
 '''set variables'''
@@ -71,13 +71,13 @@ name_parangs = "parang_stack" + str(stack) + ".txt"
 
 
 '''create multiple single-frame fits files (use this for snr plots)'''
-create_single_frame_fits(ipca_init_list,
-            pca_ipca_end,
-            interval,
-            input_path,
-            output_path,
-            prefix="planets",
-            name_out="planets")
+#create_single_frame_fits(ipca_init_list,
+#            pca_ipca_end,
+#            interval,
+#            input_path,
+#            output_path,
+#            prefix="planets",
+#            name_out="planets")
 
 
 '''create one single-frame fits file'''
@@ -91,11 +91,11 @@ create_single_frame_fits(ipca_init_list,
 
 
 '''create SNR plots'''
-#plot_snr(ipca_init_list,
-#         pca_ipca_end,
-#         interval,
-#         input_path,
-#         output_path,
-#         array_file_name="inner.txt",
-#         name_out="snr_inner_compare",
-#         title="SNR vs. Rank")
+plot_snr(ipca_init_list,
+         pca_ipca_end,
+         interval,
+         input_path,
+         output_path,
+         array_prefix="inner",
+         name_out="snr_inner",
+         title="SNR vs. Rank")

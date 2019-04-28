@@ -58,40 +58,33 @@ def plot_snr(ipca_init_list,
              interval,
              input_path,
              output_path,
-             array_file_name,
+             array_prefix,
              name_out="out",
              title="SNR vs. Rank"):
+                 
+    x_axis = []
+    for counter, i in enumerate(range(ipca_init_list[0], pca_ipca_end+1)):       
+        if counter == 0 or ((i % interval) == 0):
+            x_axis.append(i)
     
-    snr_arrays = np.loadtxt(input_path + array_file_name)
-
-    pca_lst_inner = []
-    list_fraction_inner = int(pca_ipca_end/interval)+1
-    for i in range(list_fraction_inner):
-        pca_lst_inner.append(snr_arrays[i][4])
+    pca_lst = np.loadtxt(input_path + "pca_" + array_prefix + "_.txt")
     
-    x_axis = np.concatenate((np.array([1]), np.linspace(5, 80, len(pca_lst_inner)-1)), axis=0)
+    plt.rc("axes", prop_cycle=(cycler("color", ["k", "r", "tab:orange", "y", "g", "c", "b", "m"])))
+    plt.plot(x_axis, pca_lst, marker=".", linestyle=":", label="PCA")
+        
+    ipca_dic = {}
     
-    plt.rc("axes", prop_cycle=(cycler("color", ["k", "r", "y", "g", "c", "b", "m"])))
-    plt.plot(x_axis, pca_lst_inner, marker=".", linestyle=":", label="PCA")
-    
-#    ipca_dic = {}
-#    extra = list_fraction_inner
-#    
-#    for j in ipca_init_list:
-#        ipca_dic["{0}".format(j)]= []
-#        list_fraction_inner = int((pca_ipca_end-j-1)//interval)+1
-#        for i in range(list_fraction_inner):
-#            ipca_dic["{0}".format(j)].append(snr_arrays[i+extra][4])
-#        extra += list_fraction_inner
-#        if len(ipca_dic["{0}".format(j)]) != len(pca_lst_inner):
-#            ipca_dic["{0}".format(j)] = [None] * (len(pca_lst_inner)-len(ipca_dic["{0}".format(j)])) + ipca_dic["{0}".format(j)]
-#        #print(ipca_dic["ipca_{0}_lst_inner".format(j)])
-#        plt.plot(x_axis, ipca_dic["{0}".format(j)], marker=".", linestyle=":", label= "IPCA " + str(j))
-#    
+    for i in ipca_init_list:
+        ipca_dic["{0}".format(i)]= np.loadtxt(input_path + "ipca_" + array_prefix + "_" + str(i) + ".txt").tolist()
+        if len(ipca_dic["{0}".format(i)]) != len(x_axis):
+            ipca_dic["{0}".format(i)] = [None] * (len(x_axis)-len(ipca_dic["{0}".format(i)])) + ipca_dic["{0}".format(i)]
+        plt.plot(x_axis, ipca_dic["{0}".format(i)], marker=".", linestyle=":", label= "IPCA " + str(i))
+        
     plt.title(title)
     plt.xlabel("Rank")
     plt.ylabel("SNR")
-    plt.legend()
+    plt.legend(loc='upper center', bbox_to_anchor=(0.5, -0.2), shadow=False, ncol=4)
     plt.grid(axis="y")
+    plt.tight_layout()
     #plt.show()
     plt.savefig(output_path + name_out + ".png", dpi=1000)
